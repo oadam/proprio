@@ -22,11 +22,11 @@ public final class App {
         Flyway flyway = new Flyway();
 
         // Point it to the database
-        flyway.setDataSource("jdbc:sqlite:target/proprio.db", "sa", null);
+        flyway.setDataSource("jdbc:h2:target/proprio.db", null, null);
 
         // Start the migration
         flyway.migrate();
 
-        System.out.println("Hello World!");
+        System.out.println("Hello Wold!" + jooq.public_.tables.Account.ACCOUNT);
     }
 }
