@@ -1,11 +1,7 @@
 from django.contrib import admin
 from main.models import Building, Property
 
-class PropertyInline(admin.TabularInline):
-    model = Property
-
 class BuildingAdmin(admin.ModelAdmin):
-    inlines = [PropertyInline]
     def get_list_display(self, request):
         result = ('name', 'property_count')
         if request.user.is_superuser:
@@ -32,6 +28,10 @@ class PropertyAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             result = ('user',) + result
         return result
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "building":
+            kwargs["queryset"] = Building.objects.filter(user=request.user)
+        return super(PropertyAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
     def get_queryset(self, request):
         qs = super(PropertyAdmin, self).get_queryset(request)
         if request.user.is_superuser:
