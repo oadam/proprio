@@ -2,24 +2,22 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Building(models.Model):
+    name = models.CharField(max_length=255)
     user = models.ForeignKey(User)
-    address = models.TextField()
-    notes = models.TextField(blank=True)
     def __unicode__(self):
-        a = self.address
-        return a[:100] + '...' if len(a) > 100 else a
+        return self.name
     def property_count(self):
         return self.property_set.count()
 
 class Property(models.Model):
-    building = models.ForeignKey(Building)
-    address_prefix = models.TextField(blank=True)
-    notes = models.TextField(blank=True)
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(User)
+    building = models.ForeignKey(Building, blank=True, null=True, on_delete=models.PROTECT)
+    address = models.TextField()
 
     class Meta:
         verbose_name_plural = "properties"
 
     def __unicode__(self):
-        a = self.address_prefix
-        return a[:100] + '...' if len(a) > 100 else a
+        return self.name + '\n' + self.address
 
