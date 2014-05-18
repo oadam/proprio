@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.translation import ugettext as _
 from main.models import Building, Property
 
 class BuildingAdmin(admin.ModelAdmin):
