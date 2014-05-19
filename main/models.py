@@ -14,7 +14,7 @@ class Building(models.Model):
 
 class Property(models.Model):
     name = models.CharField(_("name"), max_length=255)
-    building = models.ForeignKey(Building, verbose_name=_("building"), blank=True, null=True, on_delete=models.PROTECT)
+    building = models.ForeignKey(Building, verbose_name=Building._meta.verbose_name, blank=True, null=True, on_delete=models.PROTECT)
     address = models.TextField(_("address"))
 
     class Meta:
