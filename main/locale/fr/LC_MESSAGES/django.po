@@ -7,36 +7,75 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-19 18:19+0000\n"
-"PO-Revision-Date: 2014-05-19 19:02+0100\n"
+"POT-Creation-Date: 2014-05-20 21:24+0000\n"
+"PO-Revision-Date: 2014-05-20 22:27+0100\n"
 "Last-Translator: Olivier Adam <olivieradam666+spam@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: models.py:5 models.py:16
+#: models.py:5 models.py:15
 msgid "name"
 msgstr "nom"
 
-#: models.py:8 models.py:17
+#: models.py:7
 msgid "building"
 msgstr "immeuble"
 
-#: models.py:18
+#: models.py:12
+msgid "number of properties"
+msgstr "nombre d'appartements"
+
+#: models.py:17
 msgid "address"
 msgstr "adresse"
 
-#: models.py:21
+#: models.py:19
 msgid "property"
 msgstr "appartement"
 
-#: models.py:22
+#: models.py:20
 msgid "properties"
 msgstr "appartements"
+
+#: models.py:26
+msgid "tenant name"
+msgstr "nom du locataire"
+
+#: models.py:27
+msgid "tenant email"
+msgstr "email du locataire"
+
+#: models.py:29
+msgid "end date"
+msgstr "date de fin"
+
+#: models.py:31
+msgid "tenancy"
+msgstr "location"
+
+#: models.py:32
+msgid "tenancies"
+msgstr "locations"
+
+#: models.py:38
+msgid "start date"
+msgstr "date de début"
+
+#: models.py:39
+msgid "monthly rent"
+msgstr "loyer mensuel"
+
+#: models.py:40
+msgid "monthly provision"
+msgstr "provision pour charges mensuelle"
+
+#: models.py:42
+msgid "rent revision"
+msgstr "révision du loyer"
 
 #~ msgid "main"
 #~ msgstr "principale"
