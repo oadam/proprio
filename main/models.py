@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.core.validators import MinValueValidator
 
 class Building(models.Model):
     name = models.CharField(_("name"), max_length=255)
@@ -34,12 +35,34 @@ class Tenancy(models.Model):
         return self.tenant_name + ' ' + unicode(self.property)
 
 class RentRevision(models.Model):
-    tenancy = models.ForeignKey(Tenancy, verbose_name=Tenancy._meta.verbose_name, on_delete=models.PROTECT)
+    tenancy = models.ForeignKey(Tenancy, verbose_name=Tenancy._meta.verbose_name)
     date = models.DateField(_("start date"))
-    rent = models.DecimalField(_("monthly rent"), max_digits=7, decimal_places=2)
-    provision = models.DecimalField(_("monthly provision"), max_digits=7, decimal_places=2)
+    rent = models.DecimalField(_("monthly rent"), max_digits=7, decimal_places=2, validators=[MinValueValidator(0)])
+    provision = models.DecimalField(_("monthly provision"), max_digits=7, decimal_places=2, validators=[MinValueValidator(0)])
     class Meta:
         verbose_name = _("rent revision")
+        verbose_name_plural = _("rent revisions")
     def __unicode__(self):
         return self.date
+
+class Payment(models.Model):
+    help_text = _("money received from the tenant")
+    tenancy = models.ForeignKey(Tenancy, verbose_name=Tenancy._meta.verbose_name)
+    date = models.DateField(_("date"))
+    amount = models.DecimalField(_("amount"), max_digits=7, decimal_places=2, validators=[MinValueValidator(0)])
+    class Meta:
+        verbose_name = _("payment")
+    def __unicode__(self):
+        return unicode(self.date) + ' - ' + unicode(self.amount)
+
+class Fee(models.Model):
+    help_text = _("a one-time fee (for example an end of year adjustment fee)")
+    description = models.CharField(_("description"), max_length=255)
+    tenancy = models.ForeignKey(Tenancy, verbose_name=Tenancy._meta.verbose_name)
+    date = models.DateField(_("date"))
+    amount = models.DecimalField(_("amount"), max_digits=7, decimal_places=2)
+    class Meta:
+        verbose_name = _("one-time fee")
+    def __unicode__(self):
+        return unicode(self.description) + ' - ' + unicode(self.date)
 
