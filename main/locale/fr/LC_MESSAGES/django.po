@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: proprio\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-21 21:23+0000\n"
-"PO-Revision-Date: 2014-05-21 22:24+0100\n"
+"POT-Creation-Date: 2014-05-22 18:50+0000\n"
+"PO-Revision-Date: 2014-05-22 19:51+0100\n"
 "Last-Translator: Olivier Adam <olivieradam666+spam@gmail.com>\n"
 "Language-Team: French <olivieradam666+spam@gmail.com>\n"
 "Language: fr\n"
@@ -55,60 +55,59 @@ msgid "end date"
 msgstr "date de fin"
 
 #: models.py:32
-msgid "tenancy"
-msgstr "location"
+msgid "tenant"
+msgstr "locataire"
 
-#: models.py:33
-msgid "tenancies"
-msgstr "locations"
-
-#: models.py:39
+#: models.py:38
 msgid "start date"
 msgstr "date de début"
 
-#: models.py:40
+#: models.py:39
 msgid "monthly rent"
 msgstr "loyer mensuel"
 
-#: models.py:41
+#: models.py:40
 msgid "monthly provision"
 msgstr "provision pour charges mensuelle"
 
-#: models.py:43
+#: models.py:42
 msgid "rent revision"
 msgstr "révision du loyer"
 
-#: models.py:44
+#: models.py:43
 msgid "rent revisions"
 msgstr "révisions du loyer"
 
-#: models.py:49
+#: models.py:48
 msgid "money received from the tenant"
 msgstr "argent reçu du locataire"
 
-#: models.py:51 models.py:62
+#: models.py:50 models.py:61
 msgid "date"
 msgstr "date"
 
-#: models.py:52 models.py:63
+#: models.py:51 models.py:62
 msgid "amount"
 msgstr "montant"
 
-#: models.py:54
+#: models.py:53
 msgid "payment"
 msgstr "paiement"
 
-#: models.py:59
+#: models.py:58
 msgid "a one-time fee (for example an end of year adjustment fee)"
 msgstr "un frais non récurrent (par exemple une régularisation de fin d'année)"
 
-#: models.py:60
+#: models.py:59
 msgid "description"
 msgstr "description"
 
-#: models.py:65
+#: models.py:64
 msgid "one-time fee"
 msgstr "frais ponctuel"
+
+#~ msgid "tenancies"
+#~ msgstr "locations"
 
 #~ msgid "fee"
 #~ msgstr "frais"

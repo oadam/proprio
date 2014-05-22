@@ -22,20 +22,19 @@ class Property(models.Model):
     def __unicode__(self):
         return self.name + '\n' + self.address
 
-class Tenancy(models.Model):
+class Tenant(models.Model):
     property = models.ForeignKey(Property, verbose_name=Property._meta.verbose_name, on_delete=models.PROTECT)
-    tenant_name = models.CharField(_("tenant name"), max_length=255)
-    tenant_email = models.EmailField(_("tenant email"), max_length=254, blank=True)
+    name = models.CharField(_("name"), max_length=255)
+    email = models.EmailField(_("email"), max_length=254, blank=True)
     #begin date is inferred from first rent revision
-    end_date = models.DateField(_("end date"), blank=True, null=True)
+    tenancy_end_date = models.DateField(_("tenancy end date"), blank=True, null=True)
     class Meta:
-        verbose_name = _("tenancy")
-        verbose_name_plural = _("tenancies")
+        verbose_name = _("tenant")
     def __unicode__(self):
         return self.tenant_name + ' ' + unicode(self.property)
 
 class RentRevision(models.Model):
-    tenancy = models.ForeignKey(Tenancy, verbose_name=Tenancy._meta.verbose_name)
+    tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
     date = models.DateField(_("start date"))
     rent = models.DecimalField(_("monthly rent"), max_digits=7, decimal_places=2, validators=[MinValueValidator(0)])
     provision = models.DecimalField(_("monthly provision"), max_digits=7, decimal_places=2, validators=[MinValueValidator(0)])
@@ -47,7 +46,7 @@ class RentRevision(models.Model):
 
 class Payment(models.Model):
     help_text = _("money received from the tenant")
-    tenancy = models.ForeignKey(Tenancy, verbose_name=Tenancy._meta.verbose_name)
+    tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
     date = models.DateField(_("date"))
     amount = models.DecimalField(_("amount"), max_digits=7, decimal_places=2, validators=[MinValueValidator(0)])
     class Meta:
@@ -58,7 +57,7 @@ class Payment(models.Model):
 class Fee(models.Model):
     help_text = _("a one-time fee (for example an end of year adjustment fee)")
     description = models.CharField(_("description"), max_length=255)
-    tenancy = models.ForeignKey(Tenancy, verbose_name=Tenancy._meta.verbose_name)
+    tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
     date = models.DateField(_("date"))
     amount = models.DecimalField(_("amount"), max_digits=7, decimal_places=2)
     class Meta:
