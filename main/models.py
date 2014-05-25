@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, ValidationError
+from datetime import date
 
 class Building(models.Model):
     name = models.CharField(_("name"), max_length=255)
@@ -33,9 +34,13 @@ class Tenant(models.Model):
     def __unicode__(self):
         return self.tenant_name + ' ' + unicode(self.property)
 
+def validate_month(value):
+    if value.day != 1:
+        raise ValidationError(_("month expected. Please use first day of the month"))
+
 class RentRevision(models.Model):
     tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
-    date = models.DateField(_("start date"))
+    date = models.DateField(_("start date"), validators=[validate_month])
     rent = models.DecimalField(_("monthly rent"), max_digits=7, decimal_places=2, validators=[MinValueValidator(0)])
     provision = models.DecimalField(_("monthly provision"), max_digits=7, decimal_places=2, validators=[MinValueValidator(0)])
     class Meta:
@@ -65,3 +70,53 @@ class Fee(models.Model):
     def __unicode__(self):
         return unicode(self.description) + ' - ' + unicode(self.date)
 
+def sum_payments(date, payments):
+    return sum([x.amount for x in payments if x.date <= date])
+
+def sum_fees(date, fees):
+    month_start = date.replace(day=1)
+    return sum([-x.amount for x in fees if x.date <= month_start])
+
+def revision_to_fees(rev, end_date):
+    start_date = rev.date
+    if (end_date <= start_date):
+        return []
+    result = []
+    for m in range(12*start_date.year + start_date.month, 12*end_date.year + end_date.month):
+        d = date(m / 12, m % 12 + 1, 1)
+        result.append(Fee(
+            description=_("rent"),
+            amount = rev.rent,
+            date=d))
+        if rev.provision != 0:
+            result.append(Fee(
+                description=_("provision"),
+                amount = rev.provision,
+                date=d))
+    
+    return result
+
+def next_month_start(date):
+    if date.month == 12:
+        return date.replace(year=date.year + 1, month=1, day=1)
+    else:
+        return date.replace(month=date.month + 1, day=1)
+ 
+def revisions_to_fees(date, revisions, end_date):
+    if end_date is None:
+        end_date=date
+    next_month = next_month_start(end_date)
+    filtered_revisions = [r for r in revisions if r.date < next_month]
+    if len(filtered_revisions) == 0:
+        return []
+    sorted_revisions = sorted(filtered_revisions, key=lambda r:r.date)
+    result = []
+    for i in range(0, len(sorted_revisions) - 1):
+	result.extend(revision_to_fees(sorted_revisions[i], sorted_revisions[i + 1].date))
+    result.extend(revision_to_fees(sorted_revisions[len(sorted_revisions) -1], end_date.replace(day=1)))
+    return result
+
+    start_date = sorted_revisions.date
+    
+
+        
