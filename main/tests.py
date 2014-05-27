@@ -2,6 +2,14 @@ from unittest import TestCase
 from models import sum_payments, sum_fees, revision_to_fees,\
     revisions_to_fees, Tenant, RentRevision, Payment, Fee
 from datetime import date
+from django.test import Client
+
+class BasicIntegrationTest(TestCase):
+
+    def test(self):
+        c = Client()
+        response = c.get('/')
+        #no crash == happy
 
 
 class TenantBalanceTests(TestCase):

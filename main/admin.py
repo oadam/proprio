@@ -25,7 +25,7 @@ class FeeInline(admin.TabularInline):
     extra = 1
 
 
-class TenancyAdmin(admin.ModelAdmin):
+class TenantAdmin(admin.ModelAdmin):
     inlines = [
         PaymentInline,
         FeeInline,
@@ -34,4 +34,4 @@ class TenancyAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Building, BuildingAdmin)
 admin.site.register(models.Property, PropertyAdmin)
-admin.site.register(models.Tenancy, TenancyAdmin)
+admin.site.register(models.Tenant, TenantAdmin)
