@@ -1,3 +1,4 @@
+# vim: ai ts=4 sts=4 et sw=4
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, ValidationError
@@ -49,16 +50,20 @@ class Tenant(models.Model):
     tenancy_end_date = models.DateField(
         _("tenancy end date"), blank=True, null=True)
 
-    def balance(self):
-        cashflows = itertools.chain.from_iterable([
-            payments_to_cashflows(datetime.date.today(), self.payment_set.all()),
+    def cashflows(self):
+        non_sorted = itertools.chain.from_iterable([
+            payments_to_cashflows(datetime.date.today(),
+                                  self.payment_set.all()),
             revisions_to_cashflows(
                 datetime.date.today(),
                 self.rentrevision_set.all(),
                 self.tenancy_end_date),
             fees_to_cashflows(datetime.date.today(), self.fee_set.all())
         ])
-        return sum([c.amount for c in cashflows])
+        return sorted(non_sorted, key=lambda c: c.date)
+
+    def balance(self):
+        return sum([c.amount for c in self.cashflows()])
 
 # Translators: This is the balance of the tenant's payments
     balance.short_description = _("balance")
@@ -71,7 +76,7 @@ class Tenant(models.Model):
 
 
 def validate_month(value):
-    if value.day != 1:
+    if value != None and value.day != 1:
         raise ValidationError(
             _("month expected. Please use first day of the month"))
 
@@ -132,39 +137,40 @@ def payments_to_cashflows(date, payments):
 
 
 def fees_to_cashflows(date, fees):
-    month_start = date.replace(day=1)
     return [Cashflow(x.date, -x.amount, x.description)
-            for x in fees if x.date <= month_start]
+            for x in fees if x.date <= date]
 
 
 def revision_to_cashflows(rev, end_date):
+    """Converts a revision to a list of cashflows
+    end_date -- the first month we do not want to take into account
+    """
+    validate_month(end_date)
     start_date = rev.date
-    if (end_date <= start_date):
+    if (end_date < start_date):
         return []
     result = []
     month_range = xrange(
         12*start_date.year + start_date.month,
         12*end_date.year + end_date.month)
     for m in month_range:
-        d = date(m / 12, m % 12 + 1, 1)
+        d = date(m / 12, m % 12, 1)
         result.append(Cashflow(d, -rev.rent, _("rent")))
         if rev.provision != 0:
             result.append(Cashflow(d, -rev.provision, _("provision")))
     return result
 
 
-def next_month_start(date):
-    if date.month == 12:
-        return date.replace(year=date.year + 1, month=1, day=1)
-    else:
-        return date.replace(month=date.month + 1, day=1)
+def next_month(date):
+    return date.replace(month=date.month+1) if date.month != 12\
+        else date.replace(month=1, year=date.year + 1)
 
 
 def revisions_to_cashflows(date, revisions, end_date):
+    validate_month(end_date)
     if end_date is None:
-        end_date = date
-    next_month = next_month_start(end_date)
-    filtered_revisions = [r for r in revisions if r.date < next_month]
+        end_date = next_month(date.replace(day=1))
+    filtered_revisions = [r for r in revisions if r.date < date]
     if len(filtered_revisions) == 0:
         return []
     sorted_revisions = sorted(filtered_revisions, key=lambda r: r.date)
@@ -176,6 +182,6 @@ def revisions_to_cashflows(date, revisions, end_date):
         result.extend(cashflows)
     cashflows = revision_to_cashflows(
         sorted_revisions[len(sorted_revisions) - 1],
-        end_date.replace(day=1))
+        end_date)
     result.extend(cashflows)
     return result
