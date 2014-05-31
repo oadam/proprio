@@ -39,6 +39,12 @@ class Property(models.Model):
         return self.name + '\n' + self.address
 
 
+def validate_month(value):
+    if value is not None and value.day != 1:
+        raise ValidationError(
+            _("month expected. Please use first day of the month"))
+
+
 class Tenant(models.Model):
     property = models.ForeignKey(
         Property,
@@ -48,7 +54,8 @@ class Tenant(models.Model):
     email = models.EmailField(_("email"), max_length=254, blank=True)
 #   begin date is inferred from first rent revision
     tenancy_end_date = models.DateField(
-        _("tenancy end date"), blank=True, null=True)
+        _("tenancy end date"), blank=True,
+        null=True, validators=[validate_month])
 
     def cashflows(self):
         non_sorted = itertools.chain.from_iterable([
@@ -73,12 +80,6 @@ class Tenant(models.Model):
 
     def __unicode__(self):
         return self.name + ' ' + unicode(self.property)
-
-
-def validate_month(value):
-    if value != None and value.day != 1:
-        raise ValidationError(
-            _("month expected. Please use first day of the month"))
 
 
 class RentRevision(models.Model):
@@ -154,7 +155,9 @@ def revision_to_cashflows(rev, end_date):
         12*start_date.year + start_date.month,
         12*end_date.year + end_date.month)
     for m in month_range:
-        d = date(m / 12, m % 12, 1)
+        # because january is 1
+        mm = m - 1
+        d = date(mm / 12, mm % 12 + 1, 1)
         result.append(Cashflow(d, -rev.rent, _("rent")))
         if rev.provision != 0:
             result.append(Cashflow(d, -rev.provision, _("provision")))
