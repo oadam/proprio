@@ -3,6 +3,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, ValidationError
 from datetime import date
 from collections import namedtuple
+import itertools
+import datetime
 
 
 class Building(models.Model):
@@ -43,15 +45,29 @@ class Tenant(models.Model):
         on_delete=models.PROTECT)
     name = models.CharField(_("name"), max_length=255)
     email = models.EmailField(_("email"), max_length=254, blank=True)
-    #begin date is inferred from first rent revision
+#   begin date is inferred from first rent revision
     tenancy_end_date = models.DateField(
         _("tenancy end date"), blank=True, null=True)
+
+    def balance(self):
+        cashflows = itertools.chain.from_iterable([
+            payments_to_cashflows(datetime.date.today(), self.payment_set.all()),
+            revisions_to_cashflows(
+                datetime.date.today(),
+                self.rentrevision_set.all(),
+                self.tenancy_end_date),
+            fees_to_cashflows(datetime.date.today(), self.fee_set.all())
+        ])
+        return sum([c.amount for c in cashflows])
+
+# Translators: This is the balance of the tenant's payments
+    balance.short_description = _("balance")
 
     class Meta:
         verbose_name = _("tenant")
 
     def __unicode__(self):
-        return self.tenant_name + ' ' + unicode(self.property)
+        return self.name + ' ' + unicode(self.property)
 
 
 def validate_month(value):
@@ -109,13 +125,16 @@ class Fee(models.Model):
 
 Cashflow = namedtuple('Cashflow', ['date', 'amount', 'description'])
 
+
 def payments_to_cashflows(date, payments):
-    return [Cashflow(x.date, x.amount, _('payment')) for x in payments if x.date <= date]
+    return [Cashflow(x.date, x.amount, _('payment'))
+            for x in payments if x.date <= date]
 
 
 def fees_to_cashflows(date, fees):
     month_start = date.replace(day=1)
-    return [Cashflow(x.date, -x.amount, x.description) for x in fees if x.date <= month_start]
+    return [Cashflow(x.date, -x.amount, x.description)
+            for x in fees if x.date <= month_start]
 
 
 def revision_to_cashflows(rev, end_date):

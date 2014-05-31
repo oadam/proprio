@@ -26,6 +26,7 @@ class FeeInline(admin.TabularInline):
 
 
 class TenantAdmin(admin.ModelAdmin):
+    list_display = ('name', 'balance')
     inlines = [
         PaymentInline,
         FeeInline,
