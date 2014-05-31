@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, ValidationError
 from datetime import date
+from collections import namedtuple
 
 
 class Building(models.Model):
@@ -106,16 +107,18 @@ class Fee(models.Model):
         return unicode(self.description) + ' - ' + unicode(self.date)
 
 
-def sum_payments(date, payments):
-    return sum([x.amount for x in payments if x.date <= date])
+Cashflow = namedtuple('Cashflow', ['date', 'amount', 'description'])
+
+def payments_to_cashflows(date, payments):
+    return [Cashflow(x.date, x.amount, _('payment')) for x in payments if x.date <= date]
 
 
-def sum_fees(date, fees):
+def fees_to_cashflows(date, fees):
     month_start = date.replace(day=1)
-    return sum([-x.amount for x in fees if x.date <= month_start])
+    return [Cashflow(x.date, -x.amount, x.description) for x in fees if x.date <= month_start]
 
 
-def revision_to_fees(rev, end_date):
+def revision_to_cashflows(rev, end_date):
     start_date = rev.date
     if (end_date <= start_date):
         return []
@@ -125,15 +128,9 @@ def revision_to_fees(rev, end_date):
         12*end_date.year + end_date.month)
     for m in month_range:
         d = date(m / 12, m % 12 + 1, 1)
-        result.append(Fee(
-            description=_("rent"),
-            amount=rev.rent,
-            date=d))
+        result.append(Cashflow(d, -rev.rent, _("rent")))
         if rev.provision != 0:
-            result.append(Fee(
-                description=_("provision"),
-                amount=rev.provision,
-                date=d))
+            result.append(Cashflow(d, -rev.provision, _("provision")))
     return result
 
 
@@ -144,7 +141,7 @@ def next_month_start(date):
         return date.replace(month=date.month + 1, day=1)
 
 
-def revisions_to_fees(date, revisions, end_date):
+def revisions_to_cashflows(date, revisions, end_date):
     if end_date is None:
         end_date = date
     next_month = next_month_start(end_date)
@@ -154,12 +151,12 @@ def revisions_to_fees(date, revisions, end_date):
     sorted_revisions = sorted(filtered_revisions, key=lambda r: r.date)
     result = []
     for i in range(0, len(sorted_revisions) - 1):
-        fees = revision_to_fees(
+        cashflows = revision_to_cashflows(
             sorted_revisions[i],
             sorted_revisions[i + 1].date)
-        result.extend(fees)
-    fees = revision_to_fees(
+        result.extend(cashflows)
+    cashflows = revision_to_cashflows(
         sorted_revisions[len(sorted_revisions) - 1],
         end_date.replace(day=1))
-    result.extend(fees)
+    result.extend(cashflows)
     return result
