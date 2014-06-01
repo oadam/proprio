@@ -1,41 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Proprio - bilan</title>
-
-<!-- Bootstrap -->
-<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-<!--[if lt IE 9]>
-					<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-					      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-						  <![endif]-->
-</head>
-<body>
-<nav class="navbar navbar-default" role="navigation">
-<div class="navbar-header">
-	<a href="#" class="navbar-brand">PROPRIO</a>
-</div>
-<div class="collapse navbar-collapse">
-	<ul class="nav navbar-nav">
-		<li class="active"><a href="#">Bilan</a></li>
-		<li><a href="#">Immeubles</a></li>
-		<li><a href="#">Import bancaire</a></li>
-	</ul>
-</div>
-</nav>
-<div class="container">
+{% extends "base.html" %}
+{% load lineage %}
+{% load i18n %}
+{% block content %}
 	<table class="table table-condensed table-hover">
 		<thead>
 			<tr>
-				<th>Locataire</th>
-				<th>Balance</th>
-				<th>Actions</th>
+				<th>{% trans "tenant"|title %}</th>
+				<th>{% trans "balance"|title %}</th>
+				<th>{% trans "actions"|title %}</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -43,13 +15,13 @@
 		<tr {% if tenant.balance < 0 %}class="danger"{% endif %}>
 			<td><span class="glyphicon glyphicon-chevron-right"></span> {{ tenant.name }}<a class="cashflows" href="{% url 'tenant_cashflows' tenant.id %}">Cashflows</a></td>
 			<td>{{ tenant.balance }}€</td>
-			<td><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-euro"></span> Saisie paiement</button> <button type="button" class="btn btn-default receipts"><span class="glyphicon glyphicon-envelope"></span> Quittance</button> <button type="button" class="btn btn-warning"><span class="glyphicon glyphicon-envelope"></span> Relance</button></td>
+			<td> <button type="button" class="btn btn-default receipts"><span class="glyphicon glyphicon-envelope"></span> {% trans "write letter"|title %}</button> </td>
 		</tr>
 		{% endfor %}
 		</tbody>
 	</table>
-</div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+{% endblock %}
+{% block scripts %}
 <script>
 	//expand on click
 	$('a.cashflows').hide();
@@ -72,5 +44,4 @@
 		}
 	});
 </script>
-</body>
-</html>
+{% endblock %}
