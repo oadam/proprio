@@ -13,7 +13,7 @@
 		<tbody>
 		{% for tenant in tenant_list %}
 		<tr {% if tenant.balance < 0 %}class="danger"{% endif %}>
-			<td><span class="glyphicon glyphicon-chevron-right"></span> {{ tenant.name }}<a class="cashflows" href="{% url 'tenant_cashflows' tenant.id %}">Cashflows</a></td>
+			<td><span class="glyphicon glyphicon-chevron-right"></span> {{ tenant.name }} <a class="cashflows" href="{% url 'tenant_cashflows' tenant.id %}">Cashflows</a></td>
 			<td>{{ tenant.balance }}€</td>
 			<td> <button type="button" class="btn btn-default receipts"><span class="glyphicon glyphicon-envelope"></span> {% trans "write letter"|title %}</button> </td>
 		</tr>
