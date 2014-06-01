@@ -68,7 +68,7 @@ class Tenant(models.Model):
             fees_to_cashflows(date.today(), self.fee_set.all())
         ])
         return sorted(non_sorted,
-                      key=attrgetter('date', 'description'), reverse=True)
+                      key=attrgetter('date', 'amount'), reverse=True)
 
     def balance(self):
         return sum([c.amount for c in self.cashflows()])
