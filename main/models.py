@@ -5,7 +5,7 @@ from django.core.validators import MinValueValidator, ValidationError
 from datetime import date
 from collections import namedtuple
 import itertools
-import datetime
+from operator import attrgetter
 
 
 class Building(models.Model):
@@ -59,15 +59,16 @@ class Tenant(models.Model):
 
     def cashflows(self):
         non_sorted = itertools.chain.from_iterable([
-            payments_to_cashflows(datetime.date.today(),
+            payments_to_cashflows(date.today(),
                                   self.payment_set.all()),
             revisions_to_cashflows(
-                datetime.date.today(),
+                date.today(),
                 self.rentrevision_set.all(),
                 self.tenancy_end_date),
-            fees_to_cashflows(datetime.date.today(), self.fee_set.all())
+            fees_to_cashflows(date.today(), self.fee_set.all())
         ])
-        return sorted(non_sorted, key=lambda c: c.date)
+        return sorted(non_sorted,
+                      key=attrgetter('date', 'description'), reverse=True)
 
     def balance(self):
         return sum([c.amount for c in self.cashflows()])

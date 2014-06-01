@@ -1,0 +1,20 @@
+<div class="panel panel-info" style="max-height: 10em;overflow: auto;">
+	<table class="table table-condensed table-hover">
+		<thead>
+			<tr>
+				<th>Type</th>
+				<th>Date</th>
+				<th>Montant</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for cashflow in cashflows %}
+		<tr>
+			<td>{{cashflow.description}}</td>
+			<td>{{cashflow.date}}</td>
+			<td>{{cashflow.amount}}€</td>
+		</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</div>
