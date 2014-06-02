@@ -30,6 +30,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
+    'main',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -37,7 +38,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'lineage',#https://github.com/marcuswhybrow/django-lineage
-    'main',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -58,7 +58,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
-    'django.core.context_processors.request',
+    'django.core.context_processors.request',#for django-lineage
 )
 ROOT_URLCONF = 'proprio.urls'
 
