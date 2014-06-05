@@ -7,6 +7,7 @@
 				<th>{% trans "type"|title %}</th>
 				<th>{% trans "date"|title %}</th>
 				<th>{% trans "amount"|title %}</th>
+				<th>{% trans "balance"|title %}</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -15,6 +16,7 @@
 			<td>{{cashflow.description}}</td>
 			<td>{{cashflow.date}}</td>
 			<td>{{cashflow.amount}}€</td>
+			<td>{{cashflow.balance}}€</td>
 		</tr>
 		{% endfor %}
 		</tbody>

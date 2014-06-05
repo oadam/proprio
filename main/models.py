@@ -67,8 +67,14 @@ class Tenant(models.Model):
                 self.tenancy_end_date),
             fees_to_cashflows(date.today(), self.fee_set.all())
         ])
-        return sorted(non_sorted,
-                      key=attrgetter('date', 'amount'), reverse=True)
+        date_sorted = sorted(non_sorted, key=attrgetter('date', 'amount'))
+        result = []
+        balance = 0
+        for c in date_sorted:
+            balance += c.amount
+            result.append(
+                CashflowAndBalance(c.date, c.amount, c.description, balance))
+        return reversed(result)
 
     def balance(self):
         return sum([c.amount for c in self.cashflows()])
@@ -102,7 +108,7 @@ class RentRevision(models.Model):
 
 
 class Payment(models.Model):
-    help_text = _("money received from the tenant")
+    """money received from the tenant"""
     tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
     date = models.DateField(_("date"))
     amount = models.DecimalField(
@@ -117,7 +123,7 @@ class Payment(models.Model):
 
 
 class Fee(models.Model):
-    help_text = _("a one-time fee (for example an end of year adjustment fee)")
+    """a one-time fee (for example an end of year adjustment fee)"""
     description = models.CharField(_("description"), max_length=255)
     tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
     date = models.DateField(_("date"))
@@ -131,6 +137,8 @@ class Fee(models.Model):
 
 
 Cashflow = namedtuple('Cashflow', ['date', 'amount', 'description'])
+CashflowAndBalance = namedtuple('Cashflow',
+                                ['date', 'amount', 'description', 'balance'])
 
 
 def payments_to_cashflows(date, payments):
