@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: proprio\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-01 22:50+0000\n"
-"PO-Revision-Date: 2014-06-01 23:51+0100\n"
+"POT-Creation-Date: 2014-06-02 20:46+0000\n"
+"PO-Revision-Date: 2014-06-02 21:49+0100\n"
 "Last-Translator: Olivier Adam <olivieradam666+spam@gmail.com>\n"
 "Language-Team: French <olivieradam666+spam@gmail.com>\n"
 "Language: fr\n"
@@ -127,9 +127,29 @@ msgstr "locataires"
 msgid "bank import"
 msgstr "importation bancaire"
 
-#: templates/base.html:37
+#: templates/base.html:29
+msgid "admin"
+msgstr "administration"
+
+#: templates/base.html:32
+msgid "logout"
+msgstr "déconnexion"
+
+#: templates/base.html:42
 msgid "created by"
 msgstr "créé par"
+
+#: templates/admin/base_site.html:4
+msgid "Proprio Admin"
+msgstr "Proprio Admin"
+
+#: templates/admin/base_site.html:7
+msgid "Proprio administration"
+msgstr "Proprio administration"
+
+#: templates/admin/base_site.html:7
+msgid "back to main site"
+msgstr "retour au site principal"
 
 #. Translators: this is a cashflow type
 #: templates/main/cashflows.html:7
@@ -143,3 +163,7 @@ msgstr "actions"
 #: templates/main/tenants.html:18
 msgid "write letter"
 msgstr "écrire une lettre"
+
+#: templates/registration/login.html:5
+msgid "Username/password do not match"
+msgstr "Erreur sur le couple username/password"
