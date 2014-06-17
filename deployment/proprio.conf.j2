@@ -1,0 +1,20 @@
+# vim: set syntax=apache ts=4 sw=4 sts=4 sr noet
+<VirtualHost *:80>
+    ServerName www.example.com
+    ServerAlias example.com
+    ServerAdmin webmaster@example.com
+
+    #<Directory /usr/local/www/documents>
+    #Order allow,deny
+    #Allow from all
+    #</Directory>
+
+    WSGIScriptAlias / {{ wsgi_file }}
+
+    <Directory {{ wsgi_file }}>
+    Order allow,deny
+    Allow from all
+    </Directory>
+
+</VirtualHost>
+

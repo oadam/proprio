@@ -1,0 +1,29 @@
+---
+- hosts: webservers
+  sudo: true
+  vars:
+    source_dir: /opt/proprio
+    venv_dir: /opt/proprio_venv
+    wsgi_file: /var/www/proprio_wsgi.py
+  tasks:
+  - name: install required software
+    apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
+    with_items:
+       - apache2
+       - libapache2-mod-wsgi
+       - python-virtualenv
+       - git
+  - name: copy the application to the server
+    git: repo=https://github.com/oadam/proprio.git depth=1 dest={{ source_dir }}
+  - name: install pip requirements
+    pip: requirements={{ source_dir }}/requirements.txt virtualenv={{ venv_dir }}
+  - name: create the wsgi file
+    template: src=wsgi.py.j2 dest={{ wsgi_file }}
+  - name: create the apache config
+    template: src=proprio.conf.j2 dest=/etc/apache2/sites-available/proprio.conf
+  - name: disable apache default site
+    command: a2dissite 000-default.conf
+  - name: enable our apache website
+    command: a2ensite proprio.conf
+  - name: restart apache
+    service: name=apache2 state=reloaded
