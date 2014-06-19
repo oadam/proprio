@@ -37,7 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'lineage',#https://github.com/marcuswhybrow/django-lineage
+    'lineage',  # https://github.com/marcuswhybrow/django-lineage
 )
 
 MIDDLEWARE_CLASSES = (
@@ -58,7 +58,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
-    'django.core.context_processors.request',#for django-lineage
+    'django.core.context_processors.request',  # for django-lineage
 )
 ROOT_URLCONF = 'proprio.urls'
 
@@ -91,5 +91,12 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
-STATIC_ROOT='static'
+STATIC_ROOT = 'static'
 STATIC_URL = '/static/'
+
+# give the opportunity for the deployment script
+# to override some of the settings
+try:
+    import additional_settings
+except ImportError:
+    pass
