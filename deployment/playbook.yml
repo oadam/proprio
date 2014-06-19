@@ -5,6 +5,8 @@
     source_dir: /opt/proprio
     venv_dir: /opt/proprio_venv
     wsgi_file: /var/www/proprio_wsgi.py
+    db_file: /opt/proprio.sqlite3
+    log_file: /opt/proprio.log
   tasks:
   - name: install required software
     apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
@@ -15,8 +17,17 @@
        - git
   - name: copy the application to the server
     git: repo=https://github.com/oadam/proprio.git depth=1 dest={{ source_dir }}
+  - name: create the additional django settings
+    template: src=additional_settings.py.j2 dest={{ source_dir }}/additional_settings.py
   - name: install pip requirements
     pip: requirements={{ source_dir }}/requirements.txt virtualenv={{ venv_dir }}
+  - name: sync the app database
+    django_manage: app_path={{ source_dir }} command=syncdb virtualenv={{ venv_dir }}
+  - name: change access write to the db and log files
+    file: path={{ item }} group="www-data" mode="0660"
+    with_items:
+            - "{{ db_file }}"
+            - "{{ log_file }}"
   - name: create the wsgi file
     template: src=wsgi.py.j2 dest={{ wsgi_file }}
   - name: create the apache config
