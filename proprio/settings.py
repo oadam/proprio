@@ -97,6 +97,6 @@ STATIC_URL = '/static/'
 # give the opportunity for the deployment script
 # to override some of the settings
 try:
-    import additional_settings
+    from additional_settings import *
 except ImportError:
     pass
