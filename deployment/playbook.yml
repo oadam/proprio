@@ -2,11 +2,12 @@
 - hosts: webservers
   sudo: true
   vars:
-    source_dir: /opt/proprio
-    venv_dir: /opt/proprio_venv
+    source_dir: /opt/proprio/src
+    venv_dir: /opt/proprio/proprio_venv
     wsgi_file: /var/www/proprio_wsgi.py
-    db_file: /opt/proprio.sqlite3
-    log_file: /opt/proprio.log
+    db_file_dir: /opt/proprio
+    db_file: /opt/proprio/proprio.sqlite3
+    log_file: /opt/proprio/proprio.log
   tasks:
   - name: install required software
     apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
@@ -17,16 +18,19 @@
        - git
   - name: copy the application to the server
     git: repo=https://github.com/oadam/proprio.git depth=1 dest={{ source_dir }}
+    notify: restart apache
   - name: create the additional django settings
-    template: src=additional_settings.py.j2 dest={{ source_dir }}/additional_settings.py
+    template: src=additional_settings.py.j2 dest={{ source_dir }}/additional_settings.py owner=www-data
   - name: install pip requirements
     pip: requirements={{ source_dir }}/requirements.txt virtualenv={{ venv_dir }}
   - name: sync the app database
     django_manage: app_path={{ source_dir }} command=syncdb virtualenv={{ venv_dir }}
+    notify: restart apache
   - name: change access write to the db and log files
-    file: path={{ item }} group="www-data" mode="0660"
+    file: path={{ item }} owner="www-data"
     with_items:
             - "{{ db_file }}"
+            - "{{ db_file_dir }}"
             - "{{ log_file }}"
   - name: create the wsgi file
     template: src=wsgi.py.j2 dest={{ wsgi_file }}
@@ -36,5 +40,8 @@
     command: a2dissite 000-default.conf
   - name: enable our apache website
     command: a2ensite proprio.conf
+    notify: restart apache
+
+  handlers:
   - name: restart apache
     service: name=apache2 state=reloaded
