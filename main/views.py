@@ -15,3 +15,9 @@ def tenant_cashflows(request, tenant_id):
     tenant = get_object_or_404(Tenant, pk=tenant_id)
     context = {'cashflows': tenant.cashflows()}
     return render(request, 'main/cashflows.html', context)
+
+@login_required
+def tenant_reminders(request, tenant_id):
+    tenant = get_object_or_404(Tenant, pk=tenant_id)
+    context = {'reminders': []}
+    return render(request, 'main/reminders.html', context)

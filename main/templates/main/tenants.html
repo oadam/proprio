@@ -15,7 +15,10 @@
 		<tr {% if tenant.balance < 0 %}class="danger"{% endif %}>
 			<td><span class="glyphicon glyphicon-chevron-right"></span> {{ tenant.name }} <a class="cashflows" href="{% url 'tenant_cashflows' tenant.id %}">Cashflows</a></td>
 			<td>{{ tenant.balance }}€</td>
-			<td> <button type="button" class="btn btn-default receipts"><span class="glyphicon glyphicon-envelope"></span> {% trans "write letter"|title %}</button> </td>
+			<td>
+				<button type="button" class="btn btn-default receipts"><span class="glyphicon glyphicon-envelope"></span> {% trans "write letter"|title %}</button>
+				<button type="button" href="{% url 'tenant_reminders' tenant.id %}" class="btn btn-default reminders"><span class="glyphicon glyphicon-bullhorn"></span> {% trans "reminders"|title %}</button>
+			</td>
 		</tr>
 		{% endfor %}
 		</tbody>
@@ -41,6 +44,15 @@
 			var td = $('<td colspan="3">Loading...</td>')
 			.appendTo(tr)
 			.load($(this).find('a.cashflows').attr('href'));
+		}
+	});
+	$('.reminders').popover({
+		placement: 'bottom',
+		html: true,
+		content: function() {
+			var self = this;
+			return $('<div>').text('loading...')
+			.load($(this).attr('href'));
 		}
 	});
 </script>
