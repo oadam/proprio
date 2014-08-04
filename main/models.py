@@ -36,7 +36,7 @@ class Property(models.Model):
         verbose_name_plural = _("properties")
 
     def __unicode__(self):
-        return self.name + '\n' + self.address
+        return '{0}\n{1}'.format(self.name, self.address)
 
 
 def validate_month(value):
@@ -119,7 +119,7 @@ class Payment(models.Model):
         verbose_name = _("payment")
 
     def __unicode__(self):
-        return unicode(self.date) + ' - ' + unicode(self.amount)
+        return "{0} - {1}".format(self.date, self.amount)
 
 
 class Fee(models.Model):
@@ -133,7 +133,7 @@ class Fee(models.Model):
         verbose_name = _("one-time fee")
 
     def __unicode__(self):
-        return unicode(self.description) + ' - ' + unicode(self.date)
+        return "{0} - {1}".format(self.description, self.date)
 
 
 Cashflow = namedtuple('Cashflow', ['date', 'amount', 'description'])
