@@ -52,7 +52,8 @@ class Tenant(models.Model):
         on_delete=models.PROTECT)
     name = models.CharField(_("name"), max_length=255)
     email = models.EmailField(_("email"), max_length=254, blank=True)
-#   begin date is inferred from first rent revision
+    tenancy_begin_date = models.DateField(
+        _("tenancy begin date"), validators=[validate_month])
     tenancy_end_date = models.DateField(
         _("tenancy end date"), blank=True,
         null=True, validators=[validate_month])
@@ -63,8 +64,7 @@ class Tenant(models.Model):
                                   self.payment_set.all()),
             revisions_to_cashflows(
                 date.today(),
-                self.rentrevision_set.all(),
-                self.tenancy_end_date),
+                self.rentrevision_set.all()),
             fees_to_cashflows(date.today(), self.fee_set.all())
         ])
         date_sorted = sorted(non_sorted, key=attrgetter('date', 'amount'))
@@ -86,12 +86,15 @@ class Tenant(models.Model):
         verbose_name = _("tenant")
 
     def __unicode__(self):
-        return self.name + ' ' + unicode(self.property)
+        return "{0} {1}".format(self.name, self.property)
 
 
 class RentRevision(models.Model):
     tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
-    date = models.DateField(_("start date"), validators=[validate_month])
+    start_date = models.DateField(_("start date"), validators=[validate_month])
+    end_date = models.DateField(
+        _("end date"), validators=[validate_month],
+        blank=True, null=True)
     rent = models.DecimalField(
         _("monthly rent"), max_digits=7, decimal_places=2,
         validators=[MinValueValidator(0)])
@@ -104,7 +107,7 @@ class RentRevision(models.Model):
         verbose_name_plural = _("rent revisions")
 
     def __unicode__(self):
-        return self.date
+        return "{0} - {1}".format(self.start_date, self.end_date or "")
 
 
 class Payment(models.Model):
@@ -155,13 +158,10 @@ def revision_to_cashflows(rev, end_date):
     """Converts a revision to a list of cashflows
     end_date -- the first month we do not want to take into account
     """
-    validate_month(end_date)
-    start_date = rev.date
-    if (end_date < start_date):
-        return []
+    end_date = rev.end_date or end_date
     result = []
     month_range = xrange(
-        12*start_date.year + start_date.month,
+        12*rev.start_date.year + rev.start_date.month,
         12*end_date.year + end_date.month)
     for m in month_range:
         # because january is 1
@@ -173,27 +173,16 @@ def revision_to_cashflows(rev, end_date):
     return result
 
 
+def revisions_to_cashflows(date, revisions):
+    date = next_month(date)
+    result = map(lambda r: revision_to_cashflows(r, date), revisions)
+    joined_result = itertools.chain.from_iterable(result)
+    return [c for c in joined_result if c.date < date]
+
+
 def next_month(date):
-    return date.replace(month=date.month+1) if date.month != 12\
-        else date.replace(month=1, year=date.year + 1)
-
-
-def revisions_to_cashflows(date, revisions, end_date):
-    validate_month(end_date)
-    if end_date is None:
-        end_date = next_month(date.replace(day=1))
-    filtered_revisions = [r for r in revisions if r.date < date]
-    if len(filtered_revisions) == 0:
-        return []
-    sorted_revisions = sorted(filtered_revisions, key=lambda r: r.date)
-    result = []
-    for i in range(0, len(sorted_revisions) - 1):
-        cashflows = revision_to_cashflows(
-            sorted_revisions[i],
-            sorted_revisions[i + 1].date)
-        result.extend(cashflows)
-    cashflows = revision_to_cashflows(
-        sorted_revisions[len(sorted_revisions) - 1],
-        end_date)
-    result.extend(cashflows)
-    return result
+    date = date.replace(day=1)
+    if date.month == 12:
+        return date.replace(month=1, year=date.year + 1)
+    else:
+        return date.replace(month=date.month+1)

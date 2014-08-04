@@ -17,11 +17,15 @@ class BasicIntegrationTest(TestCase):
             address="test address")
         self.tenant = Tenant.objects.create(
             property=self.property, name="test tenant",
+	    tenancy_begin_date=date(2011, 1, 1),
             tenancy_end_date=date(2013, 9, 1))
         self.rev1 = RentRevision.objects.create(
-            tenant=self.tenant, date=date(2013, 1, 1), rent=300, provision=100)
+            tenant=self.tenant, start_date=date(2013, 1, 1),
+	    end_date=date(2013, 4, 1),
+	    rent=300, provision=100)
         self.rev2 = RentRevision.objects.create(
-            tenant=self.tenant, date=date(2013, 4, 1), rent=400, provision=200)
+            tenant=self.tenant, start_date=date(2013, 4, 1),
+	    rent=400, provision=200)
         self.fee = Fee.objects.create(
             tenant=self.tenant, description="test fee",
             date=date(2013, 3, 12), amount=0.03)
@@ -94,7 +98,7 @@ class TenantBalanceTests(TestCase):
 
     def test_revision_to_fees(self):
         revision = RentRevision(
-            date=date(2011, 4, 1),
+            start_date=date(2011, 4, 1),
             rent=200,
             provision=100)
         self.assertEqual(
@@ -113,26 +117,24 @@ class TenantBalanceTests(TestCase):
 
     def test_revisions_to_fees(self):
         rentRevision1 = RentRevision(
-            date=date(2011, 1, 1),
+            start_date=date(2011, 1, 1),
+	    end_date=date(2011, 3, 1),
             rent=200,
             provision=100)
         rentRevision2 = RentRevision(
-            date=date(2011, 3, 1),
+            start_date=date(2011, 3, 1),
+            end_date=date(2011, 5, 1),
             rent=300,
             provision=200)
         self.assertEqual(0, sum([f.amount for f in revisions_to_cashflows(
             date(1990, 1, 1),
-            [rentRevision1, rentRevision2],
-            None)]))
+            [rentRevision1, rentRevision2])]))
         self.assertEqual(-300, sum([f.amount for f in revisions_to_cashflows(
             date(2011, 1, 15),
-            [rentRevision1, rentRevision2],
-            None)]))
+            [rentRevision1, rentRevision2])]))
         self.assertEqual(-1100, sum([f.amount for f in revisions_to_cashflows(
             date(2011, 3, 15),
-            [rentRevision1, rentRevision2],
-            None)]))
+            [rentRevision1, rentRevision2])]))
         self.assertEqual(-1600, sum([f.amount for f in revisions_to_cashflows(
             date(2011, 8, 15),
-            [rentRevision1, rentRevision2],
-            date(2011, 5, 1))]))
+            [rentRevision1, rentRevision2])]))
