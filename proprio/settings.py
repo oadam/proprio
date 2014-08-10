@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = (
     'main',
+    'bank_import',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'lineage',  # https://github.com/marcuswhybrow/django-lineage
+    'bootstrapform',  # https://github.com/tzangms/django-bootstrap-form
 )
 
 MIDDLEWARE_CLASSES = (
@@ -93,6 +95,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 STATIC_ROOT = 'static'
 STATIC_URL = '/static/'
+
+PROPRIO_IMPORT_PARSERS = (
+    "cic_bank_import.importer.importer",
+)
 
 # give the opportunity for the deployment script
 # to override some of the settings

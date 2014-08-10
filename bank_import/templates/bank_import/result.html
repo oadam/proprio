@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load lineage %}
+{% load i18n %}
+{% block content %}
+<div class="alert alert-info" role="alert">
+	<ul>
+		<li>{% trans "Once import is confirmed you cannot cancel it."%}</li>
+		<li>{% trans "Lines that have been mapped won't show up next time you re-submit a file."%}</li>
+		<li>{% trans "When in doubt, map lines do 'Decide later' so that they reappear next time."%}</li>
+	</ul>
+</div>
+{% endblock %}

@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     url(r'^$', RedirectView.as_view(url='main/')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^main/', include('main.urls')),
+    url(r'^import/', include('bank_import.urls')),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
     url(r'^accounts/logout/$', lambda request: logout(request, '/')),
 )
