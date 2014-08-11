@@ -25,12 +25,18 @@ class FeeInline(admin.TabularInline):
     extra = 1
 
 
+class ReminderInline(admin.TabularInline):
+    model = models.Reminder
+    extra = 1
+
+
 class TenantAdmin(admin.ModelAdmin):
     list_display = ('name', 'balance')
     inlines = [
         PaymentInline,
         FeeInline,
         RentRevisionInline,
+        ReminderInline,
     ]
 
 admin.site.register(models.Building, BuildingAdmin)

@@ -82,11 +82,27 @@ class Tenant(models.Model):
 # Translators: This is the balance of the tenant's payments
     balance.short_description = _("balance")
 
+    def has_expired_reminder(self):
+        return any(r.expired() for r in self.reminder_set.all())
+
     class Meta:
         verbose_name = _("tenant")
 
     def __unicode__(self):
         return self.name + ' ' + unicode(self.property)
+
+
+class Reminder(models.Model):
+    tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
+    date = models.DateField(_("date"))
+    text = models.TextField(_("description"))
+    read = models.BooleanField(_("mark as read"))
+
+    def expired(self):
+        return date.today() > self.date and not self.read
+
+    def __unicode__(self):
+        return "%(tenant)s : %(message)s" % {"tenant": self.tenant, "message": self.text}
 
 
 class RentRevision(models.Model):
@@ -197,3 +213,4 @@ def revisions_to_cashflows(date, revisions, end_date):
         end_date)
     result.extend(cashflows)
     return result
+

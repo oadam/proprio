@@ -17,7 +17,17 @@
 			<td>{{ tenant.balance }}€</td>
 			<td>
 				<button type="button" class="btn btn-default receipts"><span class="glyphicon glyphicon-envelope"></span> {% trans "write letter"|title %}</button>
-				<button type="button" href="{% url 'tenant_reminders' tenant.id %}" class="btn btn-default reminders"><span class="glyphicon glyphicon-bullhorn"></span> {% trans "reminders"|title %}</button>
+				<button type="button" class="btn btn-default reminders{% if tenant.has_expired_reminder %} btn-danger{% endif %}"><span class="glyphicon glyphicon-bullhorn"></span> {% trans "reminders"|title %}</button>
+				<span class="hidden reminder-list">
+					<ul class="list-group">
+						{% for reminder in tenant.reminder_set.all %}
+						<li class="list-group-item{% if reminder.expired %} list-group-item-danger{% endif %}">
+						{{ reminder.text }}
+						</li>
+						{% endfor %}
+						<li class="list-group-item">Ajouter:<input/></li>
+					</ul>
+				</span>
 			</td>
 		</tr>
 		{% endfor %}
@@ -50,9 +60,7 @@
 		placement: 'bottom',
 		html: true,
 		content: function() {
-			var self = this;
-			return $('<div>').text('loading...')
-			.load($(this).attr('href'));
+			return $(this).next('.reminder-list').html();
 		}
 	});
 </script>
