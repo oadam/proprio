@@ -17,17 +17,7 @@
 			<td>{{ tenant.balance }}€</td>
 			<td>
 				<button type="button" class="btn btn-default receipts"><span class="glyphicon glyphicon-envelope"></span> {% trans "write letter"|title %}</button>
-				<button type="button" class="btn btn-default reminders{% if tenant.has_expired_reminder %} btn-danger{% endif %}"><span class="glyphicon glyphicon-bullhorn"></span> {% trans "reminders"|title %}</button>
-				<span class="hidden reminder-list">
-					<ul class="list-group">
-						{% for reminder in tenant.reminder_set.all %}
-						<li class="list-group-item{% if reminder.expired %} list-group-item-danger{% endif %}">
-						{{ reminder.text }}
-						</li>
-						{% endfor %}
-						<li class="list-group-item">Ajouter:<input/></li>
-					</ul>
-				</span>
+				<a href="{% url 'admin:main_remindersbytenant_change' tenant.id %}" class="btn btn-default reminders{% if tenant.has_expired_reminder %} btn-danger{% endif %}"><span class="glyphicon glyphicon-bullhorn"></span> {% trans "reminders"|title %}</a>
 			</td>
 		</tr>
 		{% endfor %}
@@ -39,7 +29,7 @@
 	//expand on click
 	$('a.cashflows').hide();
 	$('tr').click(function(event) {
-		if ($(event.target).is('button') || $(event.target).parents('button').size() > 0) {
+		if ($(event.target).is('button,a') || $(event.target).parents('button,a').size() > 0) {
 			return;
 		}
 		var collapse = $(this).hasClass('cashflows-expanded');
@@ -54,13 +44,6 @@
 			var td = $('<td colspan="3">Loading...</td>')
 			.appendTo(tr)
 			.load($(this).find('a.cashflows').attr('href'));
-		}
-	});
-	$('.reminders').popover({
-		placement: 'bottom',
-		html: true,
-		content: function() {
-			return $(this).next('.reminder-list').html();
 		}
 	});
 </script>
