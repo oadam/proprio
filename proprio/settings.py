@@ -66,6 +66,8 @@ ROOT_URLCONF = 'proprio.urls'
 
 WSGI_APPLICATION = 'proprio.wsgi.application'
 
+#for date support
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases

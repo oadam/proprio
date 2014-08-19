@@ -3,5 +3,6 @@ from . import views
 
 urlpatterns = patterns(
     '',
-    url(r'^$', views.upload3),
+    url(r'^$', views.upload),
+    url(r'^mapping/$', views.mapping),
 )
