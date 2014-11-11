@@ -2,11 +2,14 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from forms import UploadForm, MappingForm
 from django.http import HttpResponseRedirect
-from importers import get_importer
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from main.models import Tenant
+from from_settings import get_element
 import json
+
+
+IMPORTER_SETTINGS = 'PROPRIO_IMPORT_PARSERS'
 
 
 @login_required
@@ -15,7 +18,7 @@ def upload(request):
             form = UploadForm(request.POST, request.FILES)
             if form.is_valid():
                     data = form.cleaned_data
-                    importer = get_importer(data['type'])
+                    importer = get_element(IMPORTER_SETTINGS, data['type'])
                     parsed_file = importer.parse(data['file'])
                     request.session['import_file'] = parsed_file
                     request.session['import_mapping'] = ['']*len(parsed_file)
