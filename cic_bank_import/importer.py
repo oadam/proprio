@@ -16,6 +16,14 @@ class _Importer:
                 amount=100,
                 caption="Vir Ewige Zaone loyer janvier"),
             ImportLine(
+                date=date(day=3, month=1, year=2011),
+                amount=600,
+                caption="Adam loyer janvier"),
+            ImportLine(
+                date=date(day=3, month=1, year=2011),
+                amount=12.98,
+                caption="caf vienne"),
+            ImportLine(
                 date=date(day=3, month=2, year=2011),
                 amount=100,
                 caption="Vir Ewige Zaone loyer fevrier"),
