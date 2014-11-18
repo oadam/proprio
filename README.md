@@ -1,5 +1,6 @@
 property-management
 ===================
+[![Build Status](https://drone.io/github.com/oadam/proprio/status.png)](https://drone.io/github.com/oadam/proprio/latest)
 
 A free as in a beer property management software to manage your tenants
 
