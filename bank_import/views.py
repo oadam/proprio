@@ -127,7 +127,7 @@ def guess(guessers, mapping_map, line):
 
 
 def create_formset(lines, session_mapping):
-    assert len(session_mapping) <= len(lines)
+    assert len(session_mapping) == len(lines)
     mappings = [m() for m in mapping_factories]
     mapping_map = {m.type: m for m in mappings}
     guessers = [g() for g in guesser_factories]
@@ -158,7 +158,7 @@ def create_formset(lines, session_mapping):
         else:
             initial = ''
         result.append((choices, initial,))
-    formset = MappingForm(initial=[{'mapping': initial} for (choices, initial,) in result])
+    formset = MappingForm(initial=[{'mapping': i} for (c, i,) in result])
     for i in range(len(lines)):
         formset[i].fields['mapping'].choices = result[i][0]
     return formset
