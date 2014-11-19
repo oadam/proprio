@@ -56,7 +56,7 @@ def mapping(request):
     return render(request, 'bank_import/mapping.html', context)
 
 
-class TenantPaymentMapping:
+class TenantPaymentMapper:
     type = 'tenant_payment'
     caption = _('Tenant payment')
 
@@ -98,21 +98,21 @@ class TenantNameGuesser:
             return matches
 
 
-mapping_factories = (lambda: TenantPaymentMapping(),)
+mapper_factories = (lambda: TenantPaymentMapper(),)
 
 guesser_factories = (lambda: TenantNameGuesser(),)
 
 
-def value_to_combo_entry(mapping, value, use_long=False):
-    id = json.dumps((mapping.type, value,))
+def value_to_combo_entry(mapper, value, use_long=False):
+    id = json.dumps((mapper.type, value,))
     if use_long:
-        caption = mapping.get_caption(value)
+        caption = mapper.get_caption(value)
     else:
-        caption = mapping.get_long_caption(value)
+        caption = mapper.get_long_caption(value)
     return (id, caption,)
 
 
-def guess(guessers, mapping_map, line):
+def guess(guessers, mapper_map, line):
     guesses_map = defaultdict(int)
     for g in guessers:
         guess = g.guess(line)
@@ -120,16 +120,16 @@ def guess(guessers, mapping_map, line):
             guesses_map[value] += score
     guesses = sorted(guesses_map.items(), key=lambda g: -g[1])
     result = []
-    for (mapping_type, value), score in guesses:
-        mapping = mapping_map[mapping_type]
-        result.append(value_to_combo_entry(mapping, value))
+    for (mapper_type, value), score in guesses:
+        mapper = mapper_map[mapper_type]
+        result.append(value_to_combo_entry(mapper, value))
     return result
 
 
 def create_formset(lines, session_mapping):
     assert len(session_mapping) == len(lines)
-    mappings = [m() for m in mapping_factories]
-    mapping_map = {m.type: m for m in mappings}
+    mappers = [m() for m in mapper_factories]
+    mapper_map = {m.type: m for m in mappers}
     guessers = [g() for g in guesser_factories]
     result = []
     for i in range(len(lines)):
@@ -140,11 +140,11 @@ def create_formset(lines, session_mapping):
             ('HIDE', _('Hide line definitively')),
         ]
         # auto choices
-        auto_mappings = guess(guessers, mapping_map, line)
+        auto_mappings = guess(guessers, mapper_map, line)
 
         choices.append((_('Automatic mapping'), auto_mappings,))
         # all possible manual mappings
-        for m in mappings:
+        for m in mappers:
             values = []
             for v in m.get_all_values():
                 values.append(value_to_combo_entry(m, v, use_long=True))
