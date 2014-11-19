@@ -1,14 +1,16 @@
 # vim: ai ts=4 sts=4 et sw=4
-from unittest import TestCase
+from django.test import TestCase
 from views import create_formset
 from main.models import Property, Tenant, Building
 from datetime import date
 from models import ImportLine
+from django.contrib.auth.models import User
+from django.test import Client
 
 
 class BankImporter(TestCase):
 
-    def test_guesses(self):
+    def setUp(self):
         building = Building.objects.create(name="test building")
         property = Property.objects.create(
             name="test property", building=building,
@@ -21,6 +23,10 @@ class BankImporter(TestCase):
             property=property, name="John Doe",
             tenancy_begin_date=date(2011, 1, 1),
             tenancy_end_date=date(2013, 9, 1))
+        User.objects.create_user(
+            'toto', 'toto@gmail.com', 'toto_pass')
+
+    def test_guesses(self):
         lines = [
             ImportLine(
                 date=date(day=1, month=1, year=2011),
@@ -45,3 +51,16 @@ class BankImporter(TestCase):
         self.assertEquals([len(c[2][1]) for c in choices], [1, 1, 0])
         # exhaustive tenant choices
         self.assertEquals([len(c[3][1]) for c in choices], [2] * 3)
+
+    def test_upload_page(self):
+        c = Client()
+        c.login(username='toto', password='toto_pass')
+        response = c.get('/import', follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_submit(self):
+        c = Client()
+        c.login(username='toto', password='toto_pass')
+        with open('bank_import/test_import.xlsx') as fp:
+            response = c.post('/import', {type: 'CIC-XLSX', file: fp}, follow=True)
+        self.assertEqual(response.status_code, 200)

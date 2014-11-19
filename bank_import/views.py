@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from forms import UploadForm, MappingForm
 from django.http import HttpResponseRedirect
@@ -39,11 +39,13 @@ def mapping(request):
     lines = request.session['import_file']
     if request.method == 'POST':
         formset = MappingForm(request.POST)
-        if formset.is_valid():
-            raise "TODO"
+        is_valid = formset.is_valid()
+        cleaned = [f.cleaned_data.get('mapping') for f in formset]
+        if is_valid:
+            submit_form(lines, cleaned)
+            return redirect(reverse(upload))
         else:
             # store formset_data
-            cleaned = [f.cleaned_data.get('mapping') for f in formset]
             request.session['import_mapping'] = cleaned
     else:
         if request.session['import_mapping'] is None:
@@ -162,3 +164,14 @@ def create_formset(lines, session_mapping):
     for i in range(len(lines)):
         formset[i].fields['mapping'].choices = result[i][0]
     return formset
+
+
+def submit_form(lines, mappings):
+    assert len(lines) == len(mappings)
+    mappers = [m() for m in mapper_factories]
+    mapper_map = {m.type: m for m in mappers}
+    for line, mapping in zip(lines, mappings):
+        mapper_type, value = json.parse(mapping)
+        mapper = mapper_map[mapper_type]
+        print(mapper.type)
+
