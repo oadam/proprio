@@ -1,5 +1,5 @@
 # vim: ai ts=4 sts=4 et sw=4
-from unittest import TestCase
+from django.test import TestCase
 from models import fees_to_cashflows, payments_to_cashflows, revision_to_cashflows,\
     revisions_to_cashflows, RentRevision, Payment,\
     Fee, Building, Property, Tenant
@@ -11,38 +11,29 @@ from django.core import urlresolvers
 
 class BasicIntegrationTest(TestCase):
     def setUp(self):
-        self.building = Building.objects.create(name="test building")
-        self.property = Property.objects.create(
-            name="test property", building=self.building,
+        building = Building.objects.create(name="test building")
+        property = Property.objects.create(
+            name="test property", building=building,
             address="test address")
-        self.tenant = Tenant.objects.create(
-            property=self.property, name="test tenant",
+        tenant = Tenant.objects.create(
+            property=property, name="test tenant",
 	    tenancy_begin_date=date(2011, 1, 1),
             tenancy_end_date=date(2013, 9, 1))
-        self.rev1 = RentRevision.objects.create(
-            tenant=self.tenant, start_date=date(2013, 1, 1),
+        rev1 = RentRevision.objects.create(
+            tenant=tenant, start_date=date(2013, 1, 1),
 	    end_date=date(2013, 4, 1),
 	    rent=300, provision=100)
-        self.rev2 = RentRevision.objects.create(
-            tenant=self.tenant, start_date=date(2013, 4, 1),
+        rev2 = RentRevision.objects.create(
+            tenant=tenant, start_date=date(2013, 4, 1),
 	    rent=400, provision=200)
-        self.fee = Fee.objects.create(
-            tenant=self.tenant, description="test fee",
+        fee = Fee.objects.create(
+            tenant=tenant, description="test fee",
             date=date(2013, 3, 12), amount=0.03)
-        self.payment = Payment.objects.create(
-            tenant=self.tenant, date=date(2013, 12, 25), amount=4200.03)
-        self.user = User.objects.create_user(
+        payment = Payment.objects.create(
+            tenant=tenant, date=date(2013, 12, 25), amount=4200.03)
+        user = User.objects.create_user(
             'toto', 'toto@gmail.com', 'toto_pass')
-
-    def tearDown(self):
-        self.user.delete()
-        self.payment.delete()
-        self.fee.delete()
-        self.rev2.delete()
-        self.rev1.delete()
-        self.tenant.delete()
-        self.property.delete()
-        self.building.delete()
+        self.tenant_id = tenant.id
 
     def test_root(self):
         c = Client()
@@ -61,7 +52,7 @@ class BasicIntegrationTest(TestCase):
         c = Client()
         c.login(username='toto', password='toto_pass')
         reversed = urlresolvers.reverse(
-            'tenant_cashflows', args=[self.tenant.id])
+            'tenant_cashflows', args=[self.tenant_id])
         response = c.get(reversed)
         self.assertEqual(response.status_code, 200)
 
