@@ -57,6 +57,7 @@ class Tenant(models.Model):
     tenancy_end_date = models.DateField(
         _("tenancy end date"), blank=True,
         null=True, validators=[validate_month])
+    notes = models.TextField(_("notes"), blank=True)
 
     def cashflows(self):
         non_sorted = itertools.chain.from_iterable([
