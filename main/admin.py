@@ -3,12 +3,22 @@ from django.utils.translation import ugettext as _
 from main import models
 
 
+class BuildingFileInline(admin.TabularInline):
+    model = models.BuildingFile
+
+
 class BuildingAdmin(admin.ModelAdmin):
     list_display = ('name', 'property_count')
+    inlines = [BuildingFileInline]
+
+
+class PropertyFileInline(admin.TabularInline):
+    model = models.PropertyFile
 
 
 class PropertyAdmin(admin.ModelAdmin):
     list_display = ('name', 'address', 'building')
+    inlines = [PropertyFileInline]
 
 
 class RentRevisionInline(admin.TabularInline):

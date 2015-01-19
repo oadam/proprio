@@ -23,6 +23,18 @@ class Building(models.Model):
     property_count.short_description = _("number of properties")
 
 
+class BuildingFile(models.Model):
+    building = models.ForeignKey(Building, verbose_name=Building._meta.verbose_name)
+    name = models.CharField(_("name"), max_length=255)
+    file = models.FileField(_('file'), upload_to='building')
+
+    class Meta:
+        verbose_name = _("file")
+
+    def __unicode__(self):
+        return self.name
+
+
 class Property(models.Model):
     name = models.CharField(_("name"), max_length=255)
     building = models.ForeignKey(
@@ -37,6 +49,18 @@ class Property(models.Model):
 
     def __unicode__(self):
         return u'{}\n{}'.format(self.name, self.address)
+
+
+class PropertyFile(models.Model):
+    property = models.ForeignKey(Property, verbose_name=Property._meta.verbose_name)
+    name = models.CharField(_("name"), max_length=255)
+    file = models.FileField(_('file'), upload_to='property')
+
+    class Meta:
+        verbose_name = _("file")
+
+    def __unicode__(self):
+        return self.name
 
 
 def validate_month(value):
