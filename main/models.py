@@ -91,7 +91,14 @@ class Tenant(models.Model):
 
 class TenantFile(models.Model):
     tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
+    name = models.CharField(_("name"), max_length=255)
     file = models.FileField(_('file'), upload_to='tenant')
+
+    class Meta:
+        verbose_name = _("file")
+
+    def __unicode__(self):
+        return self.name
 
 
 class RentRevision(models.Model):
@@ -124,7 +131,8 @@ class Payment(models.Model):
         validators=[MinValueValidator(0)])
 
     class Meta:
-        verbose_name = _("payment")
+        verbose_name = _("payment received from tenant")
+        verbose_name_plural = _("payments received from tenant")
 
     def __unicode__(self):
         return u"{} - {}".format(self.date, self.amount)

@@ -33,10 +33,10 @@ class FeeInline(admin.TabularInline):
 class TenantAdmin(admin.ModelAdmin):
     list_display = ('name', 'balance')
     inlines = [
-        PaymentInline,
-        FeeInline,
         RentRevisionInline,
+        FeeInline,
         TenantFileInline,
+        PaymentInline,
     ]
 
 admin.site.register(models.Building, BuildingAdmin)
