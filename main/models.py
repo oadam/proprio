@@ -36,7 +36,7 @@ class Property(models.Model):
         verbose_name_plural = _("properties")
 
     def __unicode__(self):
-        return '{0}\n{1}'.format(self.name, self.address)
+        return u'{}\n{}'.format(self.name, self.address)
 
 
 def validate_month(value):
@@ -53,7 +53,7 @@ class Tenant(models.Model):
     name = models.CharField(_("name"), max_length=255)
     email = models.EmailField(_("email"), max_length=254, blank=True)
     tenancy_begin_date = models.DateField(
-        _("tenancy begin date"), validators=[validate_month])
+        _("tenancy begin date"))
     tenancy_end_date = models.DateField(
         _("tenancy end date"), blank=True,
         null=True, validators=[validate_month])
@@ -86,7 +86,7 @@ class Tenant(models.Model):
         verbose_name = _("tenant")
 
     def __unicode__(self):
-        return "{0} {1}".format(self.name, self.property)
+        return u"{} {}".format(self.name, self.property)
 
 
 class RentRevision(models.Model):
@@ -107,7 +107,7 @@ class RentRevision(models.Model):
         verbose_name_plural = _("rent revisions")
 
     def __unicode__(self):
-        return "{0} - {1}".format(self.start_date, self.end_date or "")
+        return u"{} - {}".format(self.start_date, self.end_date or "")
 
 
 class Payment(models.Model):
@@ -122,7 +122,7 @@ class Payment(models.Model):
         verbose_name = _("payment")
 
     def __unicode__(self):
-        return "{0} - {1}".format(self.date, self.amount)
+        return u"{} - {}".format(self.date, self.amount)
 
 
 class Fee(models.Model):
@@ -136,7 +136,7 @@ class Fee(models.Model):
         verbose_name = _("one-time fee")
 
     def __unicode__(self):
-        return "{0} - {1}".format(self.description, self.date)
+        return u"{} - {}".format(self.description, self.date)
 
 
 Cashflow = namedtuple('Cashflow', ['date', 'amount', 'description'])
