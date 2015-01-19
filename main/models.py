@@ -89,6 +89,11 @@ class Tenant(models.Model):
         return u"{} {}".format(self.name, self.property)
 
 
+class TenantFile(models.Model):
+    tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
+    file = models.FileField(_('file'), upload_to='tenant')
+
+
 class RentRevision(models.Model):
     tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
     start_date = models.DateField(_("start date"), validators=[validate_month])

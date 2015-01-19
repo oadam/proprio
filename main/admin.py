@@ -16,6 +16,11 @@ class RentRevisionInline(admin.TabularInline):
     extra = 1
 
 
+class TenantFileInline(admin.TabularInline):
+    model = models.TenantFile
+    extra = 1
+
+
 class PaymentInline(admin.TabularInline):
     model = models.Payment
 
@@ -31,6 +36,7 @@ class TenantAdmin(admin.ModelAdmin):
         PaymentInline,
         FeeInline,
         RentRevisionInline,
+        TenantFileInline,
     ]
 
 admin.site.register(models.Building, BuildingAdmin)
