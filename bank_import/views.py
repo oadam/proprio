@@ -37,8 +37,10 @@ def upload(request):
 @login_required
 def mapping(request):
     lines = request.session['import_file']
+    session_mapping = request.session['import_mapping']
+    session_mapping = [{'mapping': m} for m in session_mapping]
     if request.method == 'POST':
-        formset = MappingForm(request.POST)
+        formset = create_formset(lines, session_mapping, post=request.POST)
         is_valid = formset.is_valid()
         cleaned = [f.cleaned_data.get('mapping') for f in formset]
         if is_valid:
@@ -50,8 +52,6 @@ def mapping(request):
     else:
         if request.session['import_mapping'] is None:
             return HttpResponseRedirect(reverse(upload))
-        session_mapping = request.session['import_mapping']
-        session_mapping = [{'mapping': m} for m in session_mapping]
         formset = create_formset(lines, session_mapping)
     # formset is necessary for csrf protection
     context = {'zip': zip(lines, formset), 'formset': formset}
@@ -128,7 +128,7 @@ def guess(guessers, mapper_map, line):
     return result
 
 
-def create_formset(lines, session_mapping):
+def create_formset(lines, session_mapping, post=None):
     assert len(session_mapping) == len(lines)
     mappers = [m() for m in mapper_factories]
     mapper_map = {m.type: m for m in mappers}
@@ -160,7 +160,11 @@ def create_formset(lines, session_mapping):
         else:
             initial = ''
         result.append((choices, initial,))
-    formset = MappingForm(initial=[{'mapping': i} for (c, i,) in result])
+    init = [{'mapping': i} for (c, i,) in result]
+    if post is not None:
+        formset = MappingForm(post, initial=init)
+    else:
+        formset = MappingForm(initial=init)
     for i in range(len(lines)):
         formset[i].fields['mapping'].choices = result[i][0]
     return formset
@@ -171,7 +175,8 @@ def submit_form(lines, mappings):
     mappers = [m() for m in mapper_factories]
     mapper_map = {m.type: m for m in mappers}
     for line, mapping in zip(lines, mappings):
-        mapper_type, value = json.parse(mapping)
+        # TODO handle magic mappings
+        mapper_type, value = json.loads(mapping)
         mapper = mapper_map[mapper_type]
         print(mapper.type)
 
