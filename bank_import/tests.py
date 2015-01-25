@@ -103,7 +103,7 @@ class BankImporter(TestCase):
     def test_submit(self):
         c = Client()
         c.login(username='toto', password='toto_pass')
-        with open('bank_import/test_import.xlsx') as fp:
+        with open('bank_import/import_test.xlsx') as fp:
             response = c.post(
                 '/import',
                 {type: 'CIC-XLSX', file: fp},
