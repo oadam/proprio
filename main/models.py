@@ -159,6 +159,8 @@ class RentRevision(models.Model):
 
 class Payment(models.Model):
     """money received from the tenant"""
+    description = models.CharField(
+        _("description"), blank=True, max_length=1024)
     tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
     date = models.DateField(_("date"))
     amount = models.DecimalField(
@@ -193,8 +195,14 @@ CashflowAndBalance = namedtuple('Cashflow',
 
 
 def payments_to_cashflows(date, payments):
-    return [Cashflow(x.date, x.amount, _('payment'))
-            for x in payments if x.date <= date]
+    for p in payments:
+        if p.date > date:
+            continue
+        if p.description:
+            d = _('payment "%(description)s"') % {'description': p.description}
+        else:
+            d = _('payment')
+        yield Cashflow(p.date, p.amount, d)
 
 
 def fees_to_cashflows(date, fees):

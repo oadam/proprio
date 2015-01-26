@@ -17,15 +17,15 @@ class BasicIntegrationTest(TestCase):
             address="test address")
         tenant = Tenant.objects.create(
             property=property, name="test tenant",
-	    tenancy_begin_date=date(2011, 1, 1),
+        tenancy_begin_date=date(2011, 1, 1),
             tenancy_end_date=date(2013, 9, 1))
         rev1 = RentRevision.objects.create(
             tenant=tenant, start_date=date(2013, 1, 1),
-	    end_date=date(2013, 4, 1),
-	    rent=300, provision=100)
+        end_date=date(2013, 4, 1),
+        rent=300, provision=100)
         rev2 = RentRevision.objects.create(
             tenant=tenant, start_date=date(2013, 4, 1),
-	    rent=400, provision=200)
+        rent=400, provision=200)
         fee = Fee.objects.create(
             tenant=tenant, description="test fee",
             date=date(2013, 3, 12), amount=0.03)
@@ -78,13 +78,14 @@ class TenantBalanceTests(TestCase):
 
     def test_payments(self):
         payment = Payment(amount=100, date=date(2011, 6, 15))
-        self.assertEqual([(payment.date, payment.amount)], map(
-            cashflow_to_tuple,
-            payments_to_cashflows(date(2011, 6, 15), [payment])),
+        expected = [(payment.date, payment.amount)]
+        actual = payments_to_cashflows(date(2011, 6, 15), [payment])
+        actual2 = map(cashflow_to_tuple, list(actual))
+        self.assertEqual(expected, actual2,
             "payments are counted as positive")
         self.assertEqual(
             [],
-            payments_to_cashflows(date(2011, 6, 14), [payment]),
+            list(payments_to_cashflows(date(2011, 6, 14), [payment])),
             "payments are counted only after current date")
 
     def test_revision_to_fees(self):
@@ -109,7 +110,7 @@ class TenantBalanceTests(TestCase):
     def test_revisions_to_fees(self):
         rentRevision1 = RentRevision(
             start_date=date(2011, 1, 1),
-	    end_date=date(2011, 3, 1),
+        end_date=date(2011, 3, 1),
             rent=200,
             provision=100)
         rentRevision2 = RentRevision(
