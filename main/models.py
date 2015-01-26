@@ -10,6 +10,7 @@ from operator import attrgetter
 
 class Building(models.Model):
     name = models.CharField(_("name"), max_length=255)
+    notes = models.TextField(_("notes"), blank=True)
 
     class Meta:
         verbose_name = _("building")
@@ -42,6 +43,7 @@ class Property(models.Model):
         verbose_name=Building._meta.verbose_name,
         blank=True, null=True, on_delete=models.PROTECT)
     address = models.TextField(_("address"))
+    notes = models.TextField(_("notes"), blank=True)
 
     class Meta:
         verbose_name = _("property")
