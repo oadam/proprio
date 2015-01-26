@@ -83,6 +83,9 @@ class Tenant(models.Model):
         _("tenancy begin date"))
     tenancy_end_date = models.DateField(
         _("tenancy end date"), blank=True, null=True)
+    deposit = models.DecimalField(
+        _("deposit"), max_digits=7, decimal_places=2,
+        validators=[MinValueValidator(0)])
     contact_info = models.TextField(_("contact info"), blank=True)
     notes = models.TextField(_("notes"), blank=True)
 
