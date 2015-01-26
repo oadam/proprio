@@ -83,6 +83,7 @@ class Tenant(models.Model):
     tenancy_end_date = models.DateField(
         _("tenancy end date"), blank=True,
         null=True, validators=[validate_month])
+    contact_info = models.TextField(_("contact info"), blank=True)
     notes = models.TextField(_("notes"), blank=True)
 
     def cashflows(self):
