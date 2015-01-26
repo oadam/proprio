@@ -77,7 +77,6 @@ class Tenant(models.Model):
         verbose_name=Property._meta.verbose_name,
         on_delete=models.PROTECT)
     name = models.CharField(_("name"), max_length=255)
-    email = models.EmailField(_("email"), max_length=254, blank=True)
     tenancy_begin_date = models.DateField(
         _("tenancy begin date"))
     tenancy_end_date = models.DateField(
