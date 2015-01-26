@@ -87,8 +87,11 @@ class Tenant(models.Model):
     notes = models.TextField(_("notes"), blank=True)
 
     def cashflows(self):
-        last_revision_end_date = next_month(self.tenancy_end_date, -1)
-        generate_rent_until = max(date.today(), last_revision_end_date)
+        if self.tenancy_end_date:
+            last_revision_end_date = next_month(self.tenancy_end_date, -1)
+            generate_rent_until = max(date.today(), last_revision_end_date)
+        else:
+            generate_rent_until = date.today()
         rents = revisions_to_cashflows(
             generate_rent_until, self.rentrevision_set.all())
         payments = payments_to_cashflows(
