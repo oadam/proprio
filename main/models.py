@@ -25,7 +25,8 @@ class Building(models.Model):
 
 
 class BuildingFile(models.Model):
-    building = models.ForeignKey(Building, verbose_name=Building._meta.verbose_name)
+    building = models.ForeignKey(
+        Building, verbose_name=Building._meta.verbose_name)
     name = models.CharField(_("name"), max_length=255)
     file = models.FileField(_('file'), upload_to='building')
 
@@ -54,7 +55,8 @@ class Property(models.Model):
 
 
 class PropertyFile(models.Model):
-    property = models.ForeignKey(Property, verbose_name=Property._meta.verbose_name)
+    property = models.ForeignKey(
+        Property, verbose_name=Property._meta.verbose_name)
     name = models.CharField(_("name"), max_length=255)
     file = models.FileField(_('file'), upload_to='property')
 
@@ -80,20 +82,20 @@ class Tenant(models.Model):
     tenancy_begin_date = models.DateField(
         _("tenancy begin date"))
     tenancy_end_date = models.DateField(
-        _("tenancy end date"), blank=True,
-        null=True, validators=[validate_month])
+        _("tenancy end date"), blank=True, null=True)
     contact_info = models.TextField(_("contact info"), blank=True)
     notes = models.TextField(_("notes"), blank=True)
 
     def cashflows(self):
+        last_revision_end_date = next_month(self.tenancy_end_date, -1)
+        generate_rent_until = max(date.today(), last_revision_end_date)
+        rents = revisions_to_cashflows(
+            generate_rent_until, self.rentrevision_set.all())
+        payments = payments_to_cashflows(
+            date.today(), self.payment_set.all())
+        fees = fees_to_cashflows(date.today(), self.fee_set.all())
         non_sorted = itertools.chain.from_iterable([
-            payments_to_cashflows(date.today(),
-                                  self.payment_set.all()),
-            revisions_to_cashflows(
-                date.today(),
-                self.rentrevision_set.all()),
-            fees_to_cashflows(date.today(), self.fee_set.all())
-        ])
+            payments, rents, fees])
         date_sorted = sorted(non_sorted, key=attrgetter('date', 'amount'))
         result = []
         balance = 0
@@ -220,9 +222,9 @@ def revisions_to_cashflows(date, revisions):
     return [c for c in joined_result if c.date < date]
 
 
-def next_month(date):
+def next_month(date, increment=1):
     date = date.replace(day=1)
-    if date.month == 12:
-        return date.replace(month=1, year=date.year + 1)
-    else:
-        return date.replace(month=date.month+1)
+    month = date.month - 1 + increment
+    year = date.year + month / 12
+    month = month % 12 + 1
+    return date.replace(month=month, year=year)
