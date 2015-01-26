@@ -75,12 +75,12 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'data', 'db.sqlite3'),
     }
 }
 
 #uploaded files
-MEDIA_ROOT = 'uploaded_files'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'data' , 'uploaded_files')
 MEDIA_URL = '/files/'
 
 # Internationalization

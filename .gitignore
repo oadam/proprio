@@ -49,11 +49,9 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
-db.sqlite3
 #virtual env
 venv
 
 static
 .vagrant
-uploaded_files
-
+data
