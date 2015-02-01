@@ -17,6 +17,7 @@ from models import ImportedLine
 
 
 IMPORTER_SETTINGS = 'PROPRIO_IMPORT_PARSERS'
+MIN_SCORE = 3.0
 
 
 @login_required
@@ -138,6 +139,8 @@ def guess(guessers, mapper_map, line):
     guesses = sorted(guesses_map.items(), key=lambda g: -g[1])
     result = []
     for (mapper_type, value), score in guesses:
+        if score < MIN_SCORE:
+            continue
         mapper = mapper_map[mapper_type]
         result.append(value_to_combo_entry(mapper, value))
     return result
