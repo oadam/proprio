@@ -39,8 +39,12 @@ def upload(request):
 
 @login_required
 def mapping(request):
-    lines = request.session['import_file']
-    session_mapping = request.session['import_mapping']
+    lines = request.session.get('import_file')
+    session_mapping = request.session.get('import_mapping')
+    # if session has expired
+    if lines is None or session_mapping is None:
+        url = reverse(upload)
+        return HttpResponseRedirect(url)
     session_mapping = [{'mapping': m} for m in session_mapping]
     if request.method == 'POST':
         formset = create_formset(lines, session_mapping, post=request.POST)
