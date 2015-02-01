@@ -7,9 +7,21 @@ from models import ImportLine
 from django.contrib.auth.models import User
 from django.test import Client
 from decimal import Decimal
+import views
 
 
 class BankImporter(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        # MIN_SCORE has been optimized based on the number of tenants
+        # since we only have 2 tenants we'll never match anything with
+        # a non-zero min_score
+        cls.prevMinScore = views.MIN_SCORE
+        views.MIN_SCORE = 0.0
+
+    @classmethod
+    def tearDownClass(cls):
+        views.MIN_SCORE = cls.prevMinScore
 
     def setUp(self):
         building = Building.objects.create(name="test building")
