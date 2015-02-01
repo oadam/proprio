@@ -1,11 +1,12 @@
 # vim: ai ts=4 sts=4 et sw=4
 from django.test import TestCase
-from views import create_formset
-from main.models import Property, Tenant, Building
+from views import create_formset, submit_form, remove_saved_lines
+from main.models import Property, Tenant, Building, Payment
 from datetime import date
 from models import ImportLine
 from django.contrib.auth.models import User
 from django.test import Client
+from decimal import Decimal
 
 
 class BankImporter(TestCase):
@@ -30,19 +31,19 @@ class BankImporter(TestCase):
         lines = [
             ImportLine(
                 date=date(day=1, month=1, year=2011),
-                amount=100,
+                amount=Decimal('100'),
                 caption="Vir Olivier Adam rent january"),
             ImportLine(
                 date=date(day=3, month=1, year=2011),
-                amount=600,
+                amount=Decimal('600'),
                 caption="Doe rent"),
             ImportLine(
                 date=date(day=3, month=1, year=2011),
-                amount=12.98,
+                amount=Decimal('12.98'),
                 caption="unrelated utility bill"),
             ImportLine(
                 date=date(day=1, month=2, year=2011),
-                amount=100,
+                amount=Decimal('100'),
                 caption="Vir Olivier Adam rent february"),
             ]
         current_mapping = [{'mapping': ''} for x in lines]
@@ -63,15 +64,15 @@ class BankImporter(TestCase):
         lines = [
             ImportLine(
                 date=date(day=1, month=1, year=2011),
-                amount=100,
+                amount=Decimal('100'),
                 caption="Vir Olivier Adam rent january"),
             ImportLine(
                 date=date(day=3, month=1, year=2011),
-                amount=600,
+                amount=Decimal('600'),
                 caption="Doe rent"),
             ImportLine(
                 date=date(day=3, month=1, year=2011),
-                amount=12.98,
+                amount=Decimal('12.98'),
                 caption="unrelated utility bill"),
             ]
         data = {
@@ -84,15 +85,22 @@ class BankImporter(TestCase):
             'form-1-mapping':
                 '["tenant_payment", {}]'
                 .format(self.tenant_b.id),
-            'form-2-mapping':
-                '["tenant_payment", {}]'
-                .format(self.tenant_b.id),
-            #'form-2-mapping': ['HIDE']
+            'form-2-mapping': 'HIDE'
         }
         current_mapping = [{'mapping': ''} for x in lines]
         formset = create_formset(lines, current_mapping, post=data)
         is_valid = formset.is_valid()
         self.assertTrue(is_valid)
+        cleaned = [f.cleaned_data.get('mapping') for f in formset]
+        submit_form(lines, cleaned)
+        # we've mapped all lines so they should not reappear
+        saved_removed = remove_saved_lines(lines)
+        self.assertEqual(
+            saved_removed, [],
+            msg='imported lines stop showing up')
+        # cashflows must have been created for tenants
+        payments = Payment.objects.all()
+        self.assertEqual(len(payments), 2)
 
     def test_upload_page(self):
         c = Client()

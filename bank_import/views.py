@@ -4,7 +4,8 @@ from forms import UploadForm, MappingForm
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
-from main.models import Tenant
+from django.db import transaction
+from main.models import Tenant, Payment
 from from_settings import get_element
 from whoosh.filedb.filestore import RamStorage
 from whoosh.fields import TEXT, NUMERIC, Schema
@@ -12,6 +13,7 @@ from whoosh.query import Term, Or
 import json
 import re
 from collections import defaultdict
+from models import ImportedLine
 
 
 IMPORTER_SETTINGS = 'PROPRIO_IMPORT_PARSERS'
@@ -25,6 +27,7 @@ def upload(request):
                     data = form.cleaned_data
                     importer = get_element(IMPORTER_SETTINGS, data['type'])
                     parsed_file = importer.parse(data['file'])
+                    parsed_file = remove_saved_lines(parsed_file)
                     request.session['import_file'] = parsed_file
                     request.session['import_mapping'] = ['']*len(parsed_file)
                     mapping_url = reverse(mapping)
@@ -74,6 +77,14 @@ class TenantPaymentMapper:
 
     def get_long_caption(self, value):
         return '{}: {}'.format(unicode(self.caption), self.get_caption(value))
+
+    def save(self, value, line):
+        tenant = self.tenants[value]
+        payment = Payment(
+            tenant=tenant,
+            date=line.date,
+            amount=line.amount)
+        payment.save()
 
 
 class TenantNameGuesser:
@@ -170,13 +181,32 @@ def create_formset(lines, session_mapping, post=None):
     return formset
 
 
+@transaction.atomic
 def submit_form(lines, mappings):
     assert len(lines) == len(mappings)
     mappers = [m() for m in mapper_factories]
     mapper_map = {m.type: m for m in mappers}
     for line, mapping in zip(lines, mappings):
-        # TODO handle magic mappings
+        # skip non-mapped lines
+        if mapping == '':
+            continue
+        # save the mapping to avoid reimporting next time
+        line = ImportedLine(
+            date=line.date,
+            amount=line.amount,
+            caption=line.caption,
+            mapping=mapping)
+        line.save()
+        # if this is a simple hide there is nothing more to do
+        if mapping == 'HIDE':
+            continue
         mapper_type, value = json.loads(mapping)
         mapper = mapper_map[mapper_type]
-        print(mapper.type)
+        mapper.save(value, line)
 
+
+def remove_saved_lines(lines):
+    saved = ImportedLine.objects.all()
+    all_ids = set([(l.date, l.amount, l.caption,) for l in saved])
+    return [l for l in lines
+            if (l.date, l.amount, l.caption,) not in all_ids]
