@@ -76,7 +76,7 @@ class TenantPaymentMapper:
         return self.tenants[value].name
 
     def get_long_caption(self, value):
-        return '{}: {}'.format(unicode(self.caption), self.get_caption(value))
+        return u'{}: {}'.format(self.caption, self.get_caption(value))
 
     def save(self, value, line):
         tenant = self.tenants[value]
