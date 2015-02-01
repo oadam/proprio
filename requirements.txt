@@ -2,3 +2,4 @@ Django==1.6
 django-lineage
 django-bootstrap-form
 Whoosh==2.5.7
+openpyxl=2.1.4
