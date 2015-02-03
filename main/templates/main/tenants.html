@@ -25,7 +25,7 @@
 <script>
 	//expand on click
 	$('a.cashflows').hide();
-	$('tr').click(function(event) {
+	$('tbody tr').click(function(event) {
 		if ($(event.target).is('button') || $(event.target).parents('button').size() > 0) {
 			return;
 		}
