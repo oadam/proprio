@@ -52,6 +52,6 @@ docs/_build/
 #virtual env
 venv
 
-static
+/static
 .vagrant
 data
