@@ -16,5 +16,9 @@ To register a new bank format parser, duplicate the existing bank format parser,
 
 Run with Docker
 ---------------
-This app can be run using Docker. It will put its sqlite db and its uploaded files into a /data volume that you have to provide.
-It also expects a `SECRET_KEY` environment variable.
+This app can be run using Docker.
+
+You can pull it at [oadam/proprio](https://registry.hub.docker.com/u/oadam/proprio/).
+
+It will put its sqlite db and its uploaded files into a `/data` volume that you have to provide.
+It also expects a `SECRET_KEY` environment variable containing a django secret key.
