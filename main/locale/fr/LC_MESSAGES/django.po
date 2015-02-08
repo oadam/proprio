@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: proprio\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-26 23:24+0100\n"
-"PO-Revision-Date: 2015-01-26 23:24+0100\n"
+"POT-Creation-Date: 2015-02-08 19:15+0100\n"
+"PO-Revision-Date: 2015-02-08 19:16+0100\n"
 "Last-Translator: Olivier Adam <olivieradam666+spam@gmail.com>\n"
 "Language-Team: French <olivieradam666+spam@gmail.com>\n"
 "Language: fr\n"
@@ -22,12 +22,12 @@ msgstr ""
 msgid "link to the property"
 msgstr "lien vers l'appartement"
 
-#: models.py:12 models.py:30 models.py:41 models.py:60 models.py:81
-#: models.py:129
+#: models.py:12 models.py:30 models.py:41 models.py:66 models.py:87
+#: models.py:135
 msgid "name"
 msgstr "nom"
 
-#: models.py:13 models.py:47 models.py:90
+#: models.py:13 models.py:47 models.py:96
 msgid "notes"
 msgstr "notes"
 
@@ -39,8 +39,8 @@ msgstr "immeuble"
 msgid "number of properties"
 msgstr "nombre d'appartements"
 
-#: models.py:31 models.py:34 models.py:61 models.py:64 models.py:130
-#: models.py:133
+#: models.py:31 models.py:34 models.py:67 models.py:70 models.py:136
+#: models.py:139
 msgid "file"
 msgstr "fichier"
 
@@ -48,123 +48,118 @@ msgstr "fichier"
 msgid "address"
 msgstr "adresse"
 
-#: models.py:50
+#: models.py:49
+msgid "surface area"
+msgstr "superficie"
+
+#: models.py:52
+#| msgid "number of properties"
+msgid "number of rooms"
+msgstr "nombre de pièces"
+
+#: models.py:56
 msgid "property"
 msgstr "appartement"
 
-#: models.py:51
+#: models.py:57
 msgid "properties"
 msgstr "appartements"
 
-#: models.py:73
+#: models.py:79
 msgid "month expected. Please use first day of the month"
 msgstr "Mois attendu. Utiliser le premier jour du mois"
 
-#: models.py:83
+#: models.py:89
 msgid "tenancy begin date"
 msgstr "début de la location"
 
-#: models.py:85
+#: models.py:91
 msgid "tenancy end date"
 msgstr "fin de la location"
 
-#: models.py:87
+#: models.py:93
 msgid "deposit"
 msgstr "caution"
 
-#: models.py:89
+#: models.py:95
 msgid "contact info"
 msgstr "coordonnées"
 
 #. Translators: This is the balance of the tenant's payments
-#: models.py:118 templates/main/cashflows.html:10
+#: models.py:124 templates/main/cashflows.html:10
 #: templates/main/tenants.html:9
 msgid "balance"
 msgstr "balance"
 
-#: models.py:121 templates/main/tenants.html:8
+#: models.py:127 templates/main/tenants.html:8
 msgid "tenant"
 msgstr "locataire"
 
-#: models.py:141
+#: models.py:147
 msgid "start date"
 msgstr "date de début"
 
-#: models.py:143
+#: models.py:149
 msgid "end date"
 msgstr "date de fin"
 
-#: models.py:146
+#: models.py:152
 msgid "monthly rent"
 msgstr "loyer mensuel"
 
-#: models.py:149
+#: models.py:155
 msgid "monthly provision"
 msgstr "provision pour charges mensuelle"
 
-#: models.py:153
+#: models.py:159
 msgid "rent revision"
 msgstr "révision du loyer"
 
-#: models.py:154
+#: models.py:160
 msgid "rent revisions"
 msgstr "révisions du loyer"
 
-#: models.py:163 models.py:180 templates/main/cashflows.html:8
-msgid "date"
-msgstr "date"
-
-#: models.py:165 models.py:181 templates/main/cashflows.html:9
-msgid "amount"
-msgstr "montant"
-
-#: models.py:169
-msgid "payment received from tenant"
-msgstr "paiement reçu du locataire"
-
-#: models.py:170
-msgid "payments received from tenant"
-msgstr "paiements reçus du locataire"
-
-#: models.py:178
+#: models.py:169 models.py:186
 msgid "description"
 msgstr "description"
 
-#: models.py:184
+#: models.py:171 models.py:188 templates/main/cashflows.html:8
+msgid "date"
+msgstr "date"
+
+#: models.py:173 models.py:189 templates/main/cashflows.html:9
+msgid "amount"
+msgstr "montant"
+
+#: models.py:177
+msgid "payment received from tenant"
+msgstr "paiement reçu du locataire"
+
+#: models.py:178
+msgid "payments received from tenant"
+msgstr "paiements reçus du locataire"
+
+#: models.py:192
 msgid "one-time fee"
 msgstr "frais ponctuel"
 
-#: models.py:196
+#: models.py:208
+#, python-format
+#| msgid "description"
+msgid "payment \"%(description)s\""
+msgstr "paiement \"%(description)s\""
+
+#: models.py:210
 msgid "payment"
 msgstr "paiement"
 
-#: models.py:218
+#: models.py:232
 msgid "rent"
 msgstr "loyer"
 
-#: models.py:220
+#: models.py:234
 msgid "provision"
 msgstr "provision pour charges"
-
-#: templates/base.html:27
-msgid "tenants"
-msgstr "locataires"
-
-#: templates/base.html:28
-msgid "bank import"
-msgstr "importation bancaire"
-
-#: templates/base.html:29
-msgid "admin"
-msgstr "administration"
-
-#: templates/base.html:32
-msgid "logout"
-msgstr "déconnexion"
-
-#: templates/base.html:42
-msgid "created by"
-msgstr "créé par"
 
 #: templates/admin/base_site.html:4
 msgid "Proprio Admin"
@@ -177,6 +172,26 @@ msgstr "Proprio administration"
 #: templates/admin/base_site.html:7
 msgid "back to main site"
 msgstr "retour au site principal"
+
+#: templates/base.html:28
+msgid "tenants"
+msgstr "locataires"
+
+#: templates/base.html:29
+msgid "bank import"
+msgstr "importation bancaire"
+
+#: templates/base.html:30
+msgid "admin"
+msgstr "administration"
+
+#: templates/base.html:33
+msgid "logout"
+msgstr "déconnexion"
+
+#: templates/base.html:43
+msgid "created by"
+msgstr "créé par"
 
 #. Translators: this is a cashflow type
 #: templates/main/cashflows.html:7

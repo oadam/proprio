@@ -45,6 +45,12 @@ class Property(models.Model):
         blank=True, null=True, on_delete=models.PROTECT)
     address = models.TextField(_("address"))
     notes = models.TextField(_("notes"), blank=True)
+    area = models.DecimalField(
+        _("surface area"), max_digits=7, decimal_places=2,
+        validators=[MinValueValidator(0)])
+    rooms = models.DecimalField(
+        _("number of rooms"), max_digits=2, decimal_places=0,
+        validators=[MinValueValidator(1)])
 
     class Meta:
         verbose_name = _("property")
