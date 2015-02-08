@@ -14,7 +14,7 @@ class BasicIntegrationTest(TestCase):
         building = Building.objects.create(name="test building")
         property = Property.objects.create(
             name="test property", building=building,
-            address="test address")
+            address="test address", area=53, rooms=2)
         tenant = Tenant.objects.create(
             property=property, name="test tenant",
             tenancy_begin_date=date(2011, 1, 1),

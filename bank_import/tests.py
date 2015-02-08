@@ -27,7 +27,7 @@ class BankImporter(TestCase):
         building = Building.objects.create(name="test building")
         property = Property.objects.create(
             name="test property", building=building,
-            address="test address")
+            address="test address", area=53, rooms=3)
         self.tenant_a = Tenant.objects.create(
             property=property, name="Olivier Adam",
             tenancy_begin_date=date(2011, 1, 1),
