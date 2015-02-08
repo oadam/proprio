@@ -9,8 +9,8 @@ if 'SECRET_KEY' not in os.environ:
 You could use this random value :\n\n{}\n\n'''.format(generated))
 
 SECRET_KEY = os.environ['SECRET_KEY']
-DEBUG = False
-TEMPLATE_DEBUG = False
+DEBUG = 'DEBUG' in os.environ
+TEMPLATE_DEBUG = DEBUG
 ALLOWED_HOSTS = ['*']
 DATABASES = {
     'default': {

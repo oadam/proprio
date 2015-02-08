@@ -22,3 +22,4 @@ You can pull it at [oadam/proprio](https://registry.hub.docker.com/u/oadam/propr
 
 It will put its sqlite db and its uploaded files into a `/data` volume that you have to provide.
 It also expects a `SECRET_KEY` environment variable containing a django secret key.
+You can set the `DEBUG` variable to run django in debug mode.
