@@ -88,7 +88,8 @@ class TenantPaymentMapper:
         payment = Payment(
             tenant=tenant,
             date=line.date,
-            amount=line.amount)
+            amount=line.amount,
+            description=line.caption)
         payment.save()
 
 
