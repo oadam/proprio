@@ -166,7 +166,7 @@ class RentRevision(models.Model):
 class Payment(models.Model):
     """money received from the tenant"""
     description = models.CharField(
-        _("description"), blank=True, max_length=1024)
+        _("description"), max_length=1024)
     tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
     date = models.DateField(_("date"))
     amount = models.DecimalField(
