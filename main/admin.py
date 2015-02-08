@@ -22,6 +22,14 @@ class PropertyFileInline(admin.TabularInline):
 class PropertyAdmin(admin.ModelAdmin):
     list_display = ('name', 'address', 'building')
     inlines = [PropertyFileInline]
+    def building_link(self, obj):
+        if obj.building is None:
+            return _('No associated building')
+        url = urlresolvers.reverse(
+            'admin:main_building_change', args=(obj.building.id,))
+        return format_html(u'<a href={}>{}</a>', mark_safe(url), obj.building)
+    building_link.short_description = _('link to the building')
+    readonly_fields = ('building_link',)
 
 
 class RentRevisionInline(admin.TabularInline):
