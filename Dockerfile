@@ -3,9 +3,9 @@ FROM ubuntu:12.04
 
 # Set the locale (if not cannot download utf-8 file names)
 # based on http://jaredmarkell.com/docker-and-locales/
-RUN locale-gen en_US.UTF-8  
-ENV LANG en_US.UTF-8  
-ENV LANGUAGE en_US:en  
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
 RUN apt-get -qq update
