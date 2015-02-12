@@ -2,7 +2,7 @@
 from django.test import TestCase
 from models import fees_to_cashflows, payments_to_cashflows, revision_to_cashflows,\
     revisions_to_cashflows, RentRevision, Payment,\
-    Fee, Building, Property, Tenant
+    Fee, Building, Property, Tenant, Cashflow, moving_average
 from django.contrib.auth.models import User
 from datetime import date
 from django.test import Client
@@ -130,3 +130,34 @@ class TenantBalanceTests(TestCase):
         self.assertEqual(-1600, sum([f.amount for f in revisions_to_cashflows(
             date(2011, 8, 15),
             [rentRevision1, rentRevision2])]))
+
+
+class AnalyticsTest(TestCase):
+    def test_moving_average_empty(self):
+        self.assertEqual([0, 0], moving_average(
+            to_date=date(2013, 1, 1),
+            sorted_cashflows=[],
+            size=2))
+
+    def test_moving_average(self):
+        cashflows = [
+            Cashflow(
+                date=date(2011, 8, 1),
+                amount=200,
+                description='',),
+            Cashflow(
+                date=date(2011, 7, 1),
+                amount=100,
+                description='',)]
+        self.assertEqual([300, 300], moving_average(
+            to_date=date(2014, 9, 1),
+            sorted_cashflows=cashflows,
+            size=2))
+        self.assertEqual([0, 0], moving_average(
+            to_date=date(2000, 9, 1),
+            sorted_cashflows=cashflows,
+            size=2))
+        self.assertEqual([100, 300], moving_average(
+            to_date=date(2011, 9, 1),
+            sorted_cashflows=cashflows,
+            size=2))

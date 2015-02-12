@@ -17,6 +17,7 @@
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
+{% block styles %}{% endblock %}
 </head>
 <body>
 <nav class="navbar navbar-default" role="navigation">
@@ -44,6 +45,6 @@
 </div>
 </footer>
 <script src="{% static "main/jquery-1.11.2.min.js" %}"></script>
-{% block scripts%}{% endblock %}
+{% block scripts %}{% endblock %}
 </body>
 </html>

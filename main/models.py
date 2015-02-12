@@ -1,9 +1,10 @@
 # vim: ai ts=4 sts=4 et sw=4
 from django.db import models
+from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, ValidationError
 from datetime import date
-from collections import namedtuple
+from collections import namedtuple, deque
 import itertools
 from operator import attrgetter
 
@@ -117,8 +118,18 @@ class Tenant(models.Model):
                 CashflowAndBalance(c.date, c.amount, c.description, balance))
         return reversed(result)
 
+    def trend(self):
+        return moving_average(date.today(), list(self.cashflows()), 3)
+
     def balance(self):
         return sum([c.amount for c in self.cashflows()])
+
+    def rent(self):
+        query_set = self.rentrevision_set.all()
+        result = query_set.aggregate(Max('rent'))['rent__max']
+        if result is None:
+            result = 0
+        return result
 
 # Translators: This is the balance of the tenant's payments
     balance.short_description = _("balance")
@@ -244,7 +255,55 @@ def revisions_to_cashflows(date, revisions):
 
 def next_month(date, increment=1):
     date = date.replace(day=1)
+    return add_month(date, increment)
+
+
+def add_month(date, increment=1):
     month = date.month - 1 + increment
     year = date.year + month / 12
     month = month % 12 + 1
     return date.replace(month=month, year=year)
+
+
+def pop_cashflows_until(sorted_cashflows, until):
+    result = []
+    while len(sorted_cashflows) > 0 and sorted_cashflows[0].date < until:
+        c = sorted_cashflows.popleft()
+        result.append(c)
+    return result
+
+
+def moving_average(to_date, sorted_cashflows, size):
+    """
+    Returns an array of the requested size.
+    Each point of this array correspond to the average balance of the account
+    over the course of a month
+    The last point is the average between to_date and to_date - 1 month
+    """
+    if len(sorted_cashflows) == 0:
+        sorted = True
+    else:
+        sorted = sorted_cashflows[-1].date <= sorted_cashflows[0].date
+    assert sorted, "sorted_list is not sorted"
+    # clone and sort by ascending date
+    cashflows = deque(reversed(sorted_cashflows))
+    from_date = add_month(to_date, -size)
+    cashflows_before = pop_cashflows_until(cashflows, from_date)
+    balance = 0
+    balance += sum([float(c.amount) for c in cashflows_before])
+    result = []
+    for i in range(size):
+        to_date = add_month(from_date)
+        month_cashflows = pop_cashflows_until(cashflows, to_date)
+        product = 0
+        last_balance = balance
+        last_date = from_date
+        for c in month_cashflows:
+            product += last_balance * (c.date - last_date).days
+            last_balance += float(c.amount)
+            last_date = c.date
+        product += last_balance * (to_date - last_date).days
+        result.append(product / (to_date - from_date).days)
+        from_date = to_date
+        balance = last_balance
+    return result
