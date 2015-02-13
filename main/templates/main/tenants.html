@@ -15,14 +15,16 @@
 			<tr>
 				<th>{% trans "tenant"|title %}</th>
 				<th>{% trans "balance"|title %}</th>
+				<th>{% trans "trend"|title %}</th>
 				<th>{% trans "actions"|title %}</th>
 			</tr>
 		</thead>
 		<tbody>
 		{% for t in tenants %}
-		<tr>
+		<tr class="{{ t.css }}">
 			<td><span class="glyphicon glyphicon-chevron-right"></span> {{ t.tenant.name }} <a class="cashflows" href="{% url 'tenant_cashflows' t.tenant.id %}">Cashflows</a></td>
-			<td class="{{ t.css }}">{{ t.tenant.balance }}€ <span class="trend" normal-min="{{ t.normal_min }}"> {{ t.trend }}</span></td>
+			<td>{{ t.tenant.balance }}€</td>
+			<td><span class="trend" normal-min="{{ t.normal_min }}"> {{ t.trend }}</span></td>
 			<td> <button type="button" class="btn btn-default receipts"><span class="glyphicon glyphicon-envelope"></span> {% trans "write letter"|title %}</button> </td>
 		</tr>
 		{% endfor %}
@@ -56,7 +58,8 @@
 			var normalMin = JSON.parse($(this).attr('normal-min'));
 			var trend = JSON.parse($(this).text());
 			$(this).sparkline(trend, {
-				width: '30px',
+				width: '50px',
+				height: '30px',
 				normalRangeMax: 0,
 				normalRangeMin: -normalMin,
 				fillColor: false
