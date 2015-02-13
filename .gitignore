@@ -55,4 +55,4 @@ venv
 /static
 .vagrant
 data/*
-!data/emptyFileForGit.txt
+!data/README

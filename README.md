@@ -10,6 +10,12 @@ property-management
 
 A free as in a beer property management software to manage your tenants
 
+Demo link
+---------
+[Demo link](http://proprio.herokuapp.com/).
+The database is reset every once in a while.
+Please use login `demo/demo`.
+
 Installation
 ------------
 `pip install -r requirements.txt`
