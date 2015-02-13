@@ -54,4 +54,5 @@ venv
 
 /static
 .vagrant
-data
+data/*
+!data/emptyFileForGit.txt
