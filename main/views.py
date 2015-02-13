@@ -15,7 +15,7 @@ def tenants(request):
         rounded_trend = [round(v, 2) for v in t.trend()]
         result.append({
             "tenant": t,
-            "class": css,
+            "css": css,
             "normal_min": json.dumps(float(t.rent())),
             "trend": json.dumps(rounded_trend)
         })
