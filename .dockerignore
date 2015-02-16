@@ -54,5 +54,4 @@ venv
 
 /static
 .vagrant
-data/*
-!data/README
+data

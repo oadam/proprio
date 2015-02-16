@@ -1,34 +1,45 @@
 {% extends "base.html" %}
 {% load lineage %}
 {% load i18n %}
+{% load static %}
+{% block styles %}
+<style>
+	.jqstooltip {
+		box-sizing: content-box;
+	}
+</style>
+{% endblock %}
 {% block content %}
 	<table class="table table-condensed table-hover">
 		<thead>
 			<tr>
 				<th>{% trans "tenant"|title %}</th>
 				<th>{% trans "balance"|title %}</th>
+				<th>{% trans "trend"|title %}</th>
 				<th>{% trans "actions"|title %}</th>
 			</tr>
 		</thead>
 		<tbody>
-		{% for tenant in tenant_list %}
-		<tr {% if tenant.balance < 0 %}class="danger"{% endif %}>
-			<td><span class="glyphicon glyphicon-chevron-right"></span> {{ tenant.name }} <a class="cashflows" href="{% url 'tenant_cashflows' tenant.id %}">Cashflows</a></td>
-			<td>{{ tenant.balance }}€</td>
+		{% for t in tenants %}
+		<tr class="{{ t.css }}">
+			<td><span class="glyphicon glyphicon-chevron-right"></span> {{ t.tenant.name }} <a class="cashflows" href="{% url 'tenant_cashflows' t.tenant.id %}">Cashflows</a></td>
+			<td>{{ t.tenant.balance }}€</td>
+			<td><span class="trend" normal-min="{{ t.normal_min }}"> {{ t.trend }}</span></td>
 			<td>
 				<button type="button" class="btn btn-default receipts"><span class="glyphicon glyphicon-envelope"></span> {% trans "write letter"|title %}</button>
-				<a href="{% url 'admin:main_remindersbytenant_change' tenant.id %}" class="btn btn-default reminders{% if tenant.has_expired_reminder %} btn-danger{% endif %}"><span class="glyphicon glyphicon-bullhorn"></span> {% trans "reminders"|title %}</a>
-			</td>
+				<a href="{% url 'admin:main_remindersbytenant_change' t.tenant.id %}" class="btn btn-default reminders{% if t.tenant.has_expired_reminder %} btn-danger{% endif %}"><span class="glyphicon glyphicon-bullhorn"></span> {% trans "reminders"|title %}</a>
+		       	</td>
 		</tr>
 		{% endfor %}
 		</tbody>
 	</table>
 {% endblock %}
 {% block scripts %}
+<script src="{% static "main/jquery.sparkline.min.js" %}"></script>
 <script>
 	//expand on click
 	$('a.cashflows').hide();
-	$('tr').click(function(event) {
+	$('tbody tr').click(function(event) {
 		if ($(event.target).is('button,a') || $(event.target).parents('button,a').size() > 0) {
 			return;
 		}
@@ -40,11 +51,23 @@
 		if (collapse) {
 			$(this).next('tr').remove();
 		} else {
-			var tr = $('<tr>').insertAfter(this)
-			var td = $('<td colspan="3">Loading...</td>')
+			var tr = $('<tr>').insertAfter(this);
+			//big colspan to take all columns
+			var td = $('<td colspan="20">Loading...</td>')
 			.appendTo(tr)
 			.load($(this).find('a.cashflows').attr('href'));
 		}
+	});
+	$('.trend').each(function() {
+			var normalMin = JSON.parse($(this).attr('normal-min'));
+			var trend = JSON.parse($(this).text());
+			$(this).sparkline(trend, {
+				width: '50px',
+				height: '30px',
+				normalRangeMax: 0,
+				normalRangeMin: -normalMin,
+				fillColor: false
+			});
 	});
 </script>
 {% endblock %}

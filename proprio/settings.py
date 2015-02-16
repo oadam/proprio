@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -24,6 +25,9 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
+# hack from http://stackoverflow.com/a/7651002/436792
+TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
+
 ALLOWED_HOSTS = []
 
 
@@ -31,6 +35,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = (
     'main',
+    'bank_import',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,6 +43,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'lineage',  # https://github.com/marcuswhybrow/django-lineage
+    'bootstrapform',  # https://github.com/tzangms/django-bootstrap-form
 )
 
 MIDDLEWARE_CLASSES = (
@@ -64,6 +70,8 @@ ROOT_URLCONF = 'proprio.urls'
 
 WSGI_APPLICATION = 'proprio.wsgi.application'
 
+#for date support
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
@@ -71,9 +79,13 @@ WSGI_APPLICATION = 'proprio.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'data', 'db.sqlite3'),
     }
 }
+
+#uploaded files
+MEDIA_ROOT = os.path.join(BASE_DIR, 'data' , 'uploaded_files')
+MEDIA_URL = '/files/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
@@ -93,6 +105,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 STATIC_ROOT = 'static'
 STATIC_URL = '/static/'
+
+PROPRIO_IMPORT_PARSERS = (
+    "cic_bank_import.importer.importer",
+)
 
 # give the opportunity for the deployment script
 # to override some of the settings

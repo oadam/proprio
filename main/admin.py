@@ -1,18 +1,44 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 from main import models
+from django.core import urlresolvers
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+
+
+class BuildingFileInline(admin.TabularInline):
+    model = models.BuildingFile
 
 
 class BuildingAdmin(admin.ModelAdmin):
     list_display = ('name', 'property_count')
+    inlines = [BuildingFileInline]
+
+
+class PropertyFileInline(admin.TabularInline):
+    model = models.PropertyFile
 
 
 class PropertyAdmin(admin.ModelAdmin):
     list_display = ('name', 'address', 'building')
+    inlines = [PropertyFileInline]
+    def building_link(self, obj):
+        if obj.building is None:
+            return _('No associated building')
+        url = urlresolvers.reverse(
+            'admin:main_building_change', args=(obj.building.id,))
+        return format_html(u'<a href={}>{}</a>', mark_safe(url), obj.building)
+    building_link.short_description = _('link to the building')
+    readonly_fields = ('building_link',)
 
 
 class RentRevisionInline(admin.TabularInline):
     model = models.RentRevision
+    extra = 1
+
+
+class TenantFileInline(admin.TabularInline):
+    model = models.TenantFile
     extra = 1
 
 
@@ -28,10 +54,18 @@ class FeeInline(admin.TabularInline):
 class TenantAdmin(admin.ModelAdmin):
     list_display = ('name', 'balance')
     inlines = [
-        PaymentInline,
-        FeeInline,
         RentRevisionInline,
+        FeeInline,
+        TenantFileInline,
+        PaymentInline,
     ]
+    readonly_fields = ('property_link',)
+
+    def property_link(self, obj):
+        url = urlresolvers.reverse(
+            'admin:main_property_change', args=(obj.property.id,))
+        return format_html(u'<a href={}>{}</a>', mark_safe(url), obj.property)
+    property_link.short_description = _('link to the property')
 
 #This is a hack to have 2 displays for the tenants
 class RemindersByTenant(models.Tenant):

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load lineage %}
+{% load bootstrap %}
+{% load i18n %}
+{% block content %}
+<div class="alert alert-info" role="alert">
+	<ul>
+		<li>{% trans "Once import is confirmed you cannot cancel it."%}</li>
+		<li>{% trans "Lines that have been mapped won't show up next time you re-submit a file."%}</li>
+		<li>{% trans "When in doubt, map lines to 'Decide later' so that they reappear next time."%}</li>
+	</ul>
+</div>
+
+<form role="form" method="post" action="">
+	{% csrf_token %}
+	{{ formset.management_form }}
+	<table class="table table-striped table-hover">
+		<thead>
+			<tr>
+				<th>{% trans "date"|title %}</th>
+				<th>{% trans "amount"|title %}</th>
+				<th>{% trans "caption"|title %}</th>
+				<th>{% trans "mapping"|title %}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for l, form in zip %}
+				<tr>
+					<td>{{ l.date }}</td>
+					<td>{{ l.amount }}</td>
+					<td>{{ l.caption }}</td>
+					<td>
+						{{ form.mapping.errors }}
+						{{ form.mapping }}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<button type="submit" class="btn btn-default">{% trans "Submit"%}</button>
+</form>
+{% endblock %}

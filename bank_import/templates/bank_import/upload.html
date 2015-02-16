@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load lineage %}
+{% load bootstrap %}
+{% load i18n %}
+{% block content %}
+<form enctype="multipart/form-data" role="form" method="post" action=".">
+        {% csrf_token %}
+        {{ form|bootstrap }}
+        <button type="submit" class="btn btn-default">{% trans "Submit"%}</button>
+</form>
+{% endblock %}
