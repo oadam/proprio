@@ -12,6 +12,10 @@ from django.conf import settings
 def create_demo_data(apps, schema_editor):
     if settings.TESTING:
         return
+    # only run for demos
+    if User.objects.count() != 0:
+        print("demo context skipped")
+        return
     User.objects.create_superuser(
         username='demo', email='demo@gmail.com', password='demo')
 
