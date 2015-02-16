@@ -162,7 +162,7 @@ class Reminder(models.Model):
     date = models.DateField(_("date"))
     text = models.TextField(_("description")) 
     text.widget = Textarea(attrs={'rows': 2})
-    read = models.BooleanField(_("mark as read"))
+    read = models.BooleanField(_("mark as read"), default=False)
 
     def expired(self):
         return date.today() > self.date and not self.read
