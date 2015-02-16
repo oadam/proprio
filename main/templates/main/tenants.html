@@ -22,9 +22,15 @@
 		<tbody>
 		{% for t in tenants %}
 		<tr class="{{ t.css }}">
-			<td><span class="glyphicon glyphicon-chevron-right"></span> {{ t.tenant.name }} <a class="cashflows" href="{% url 'tenant_cashflows' t.tenant.id %}">Cashflows</a></td>
+			<td>
+				<span class="glyphicon glyphicon-chevron-right"></span>
+				<a href="{% url 'admin:main_tenant_change' t.tenant.id %}">{{ t.tenant.name }}</a>
+				<a class="cashflows" href="{% url 'tenant_cashflows' t.tenant.id %}">Cashflows</a>
+			</td>
 			<td>{{ t.tenant.balance }}€</td>
-			<td><span class="trend" normal-min="{{ t.normal_min }}"> {{ t.trend }}</span></td>
+			<td>
+				<span class="trend" normal-min="{{ t.normal_min }}"> {{ t.trend }}</span>
+			</td>
 			<td>
 				<button type="button" class="btn btn-default receipts"><span class="glyphicon glyphicon-envelope"></span> {% trans "write letter"|title %}</button>
 				<a href="{% url 'admin:main_tenantreminders_change' t.tenant.id %}" class="btn btn-default reminders{% if t.tenant.has_expired_reminder %} btn-danger{% endif %}"><span class="glyphicon glyphicon-bullhorn"></span> {% trans "reminders"|title %}</a>
