@@ -135,8 +135,18 @@ class Tenant(models.Model):
 # Translators: This is the balance of the tenant's payments
     balance.short_description = _("balance")
 
-    def has_expired_reminder(self):
-        return any(r.expired() for r in self.reminder_set.all())
+    def expired_reminders_count(self):
+        return (
+            self.reminder_set
+            .filter(read=False)
+            .filter(date__lte=date.today())
+            .count())
+
+    def pending_reminders_count(self):
+        return (
+            self.reminder_set
+            .filter(read=False)
+            .count())
 
     class Meta:
         verbose_name = _("tenant")
@@ -163,10 +173,6 @@ class Reminder(models.Model):
     text = models.TextField(_("description"))
     text.widget = Textarea(attrs={'rows': 2})
     read = models.BooleanField(_("mark as read"), default=False)
-
-    def expired(self):
-        return date.today() > self.date and not self.read
-    expired.boolean = True
 
     class Meta:
         verbose_name = _("reminder")

@@ -21,11 +21,21 @@ def tenants(request):
             css = "warning"
         else:
             css = ""
+
+        expired = t.expired_reminders_count()
+        if expired > 0:
+            reminder_css = "btn-danger"
+            reminders_count = expired
+        else:
+            reminder_css = ""
+            reminders_count = t.pending_reminders_count()
         result.append({
             "tenant": t,
             "css": css,
             "normal_min": json.dumps(float_rent),
-            "trend": json.dumps(rounded_trend)
+            "trend": json.dumps(rounded_trend),
+            "reminder_css": reminder_css,
+            "reminders_count": reminders_count
         })
     context = {'tenants': result}
     return render(request, 'main/tenants.html', context)
