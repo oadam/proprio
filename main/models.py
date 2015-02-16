@@ -160,7 +160,7 @@ class TenantFile(models.Model):
 class Reminder(models.Model):
     tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
     date = models.DateField(_("date"))
-    text = models.TextField(_("description")) 
+    text = models.TextField(_("description"))
     text.widget = Textarea(attrs={'rows': 2})
     read = models.BooleanField(_("mark as read"), default=False)
 
@@ -168,8 +168,11 @@ class Reminder(models.Model):
         return date.today() > self.date and not self.read
     expired.boolean = True
 
+    class Meta:
+        verbose_name = _("reminder")
+
     def __unicode__(self):
-        return "%(tenant)s : %(message)s" % {"tenant": self.tenant, "message": self.text}
+        return u"{} : {}".format(self.tenant, self.text)
 
 
 class RentRevision(models.Model):
@@ -326,4 +329,3 @@ def moving_average(to_date, sorted_cashflows, size):
         from_date = to_date
         balance = last_balance
     return result
-

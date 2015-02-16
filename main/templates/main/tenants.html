@@ -27,7 +27,7 @@
 			<td><span class="trend" normal-min="{{ t.normal_min }}"> {{ t.trend }}</span></td>
 			<td>
 				<button type="button" class="btn btn-default receipts"><span class="glyphicon glyphicon-envelope"></span> {% trans "write letter"|title %}</button>
-				<a href="{% url 'admin:main_remindersbytenant_change' t.tenant.id %}" class="btn btn-default reminders{% if t.tenant.has_expired_reminder %} btn-danger{% endif %}"><span class="glyphicon glyphicon-bullhorn"></span> {% trans "reminders"|title %}</a>
+				<a href="{% url 'admin:main_tenantreminders_change' t.tenant.id %}" class="btn btn-default reminders{% if t.tenant.has_expired_reminder %} btn-danger{% endif %}"><span class="glyphicon glyphicon-bullhorn"></span> {% trans "reminders"|title %}</a>
 		       	</td>
 		</tr>
 		{% endfor %}

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from main import models
 from django.core import urlresolvers
 from django.utils.html import format_html
@@ -22,6 +22,7 @@ class PropertyFileInline(admin.TabularInline):
 class PropertyAdmin(admin.ModelAdmin):
     list_display = ('name', 'address', 'building')
     inlines = [PropertyFileInline]
+
     def building_link(self, obj):
         if obj.building is None:
             return _('No associated building')
@@ -67,16 +68,17 @@ class TenantAdmin(admin.ModelAdmin):
         return format_html(u'<a href={}>{}</a>', mark_safe(url), obj.property)
     property_link.short_description = _('link to the property')
 
-#This is a hack to have 2 displays for the tenants
-class RemindersByTenant(models.Tenant):
+
+# This is a hack to have 2 displays for the tenants
+class TenantReminders(models.Tenant):
     class Meta:
         proxy = True
-        verbose_name = _("reminders by tenant")
+        verbose_name = _("tenant reminder list")
+        verbose_name_plural = _("tenants reminder lists")
 
 
 class ReminderInline(admin.TabularInline):
-    fields = ['expired', 'date', 'read', 'text',]
-    readonly_fields = ['expired',]
+    fields = ['date', 'read', 'text']
     model = models.Reminder
     extra = 1
 
@@ -89,8 +91,7 @@ class TenantRemindersAdmin(admin.ModelAdmin):
     ]
 
 
-
 admin.site.register(models.Building, BuildingAdmin)
 admin.site.register(models.Property, PropertyAdmin)
 admin.site.register(models.Tenant, TenantAdmin)
-admin.site.register(RemindersByTenant, TenantRemindersAdmin)
+admin.site.register(TenantReminders, TenantRemindersAdmin)
