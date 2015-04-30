@@ -22,10 +22,19 @@
 		<tbody>
 		{% for t in tenants %}
 		<tr class="{{ t.css }}">
-			<td><span class="glyphicon glyphicon-chevron-right"></span> {{ t.tenant.name }} <a class="cashflows" href="{% url 'tenant_cashflows' t.tenant.id %}">Cashflows</a></td>
+			<td>
+				<span class="glyphicon glyphicon-chevron-right"></span>
+				<a href="{% url 'admin:main_tenant_change' t.tenant.id %}">{{ t.tenant.name }}</a>
+				<a class="cashflows" href="{% url 'tenant_cashflows' t.tenant.id %}">Cashflows</a>
+			</td>
 			<td>{{ t.tenant.balance }}€</td>
-			<td><span class="trend" normal-min="{{ t.normal_min }}"> {{ t.trend }}</span></td>
-			<td> <button type="button" class="btn btn-default receipts"><span class="glyphicon glyphicon-envelope"></span> {% trans "write letter"|title %}</button> </td>
+			<td>
+				<span class="trend" normal-min="{{ t.normal_min }}"> {{ t.trend }}</span>
+			</td>
+			<td>
+				<button type="button" class="btn btn-default receipts"><span class="glyphicon glyphicon-envelope"></span> {% trans "write letter"|title %}</button>
+				<a href="{% url 'admin:main_tenantreminders_change' t.tenant.id %}" class="btn btn-default reminders {{t.reminder_css}}"><span class="glyphicon glyphicon-bullhorn"></span> {% trans "reminders"|title %} - {{t.reminders_count}}</a>
+		       	</td>
 		</tr>
 		{% endfor %}
 		</tbody>
@@ -37,7 +46,7 @@
 	//expand on click
 	$('a.cashflows').hide();
 	$('tbody tr').click(function(event) {
-		if ($(event.target).is('button') || $(event.target).parents('button').size() > 0) {
+		if ($(event.target).is('button,a') || $(event.target).parents('button,a').size() > 0) {
 			return;
 		}
 		var collapse = $(this).hasClass('cashflows-expanded');
@@ -48,8 +57,9 @@
 		if (collapse) {
 			$(this).next('tr').remove();
 		} else {
-			var tr = $('<tr>').insertAfter(this)
-			var td = $('<td colspan="3">Loading...</td>')
+			var tr = $('<tr>').insertAfter(this);
+			//big colspan to take all columns
+			var td = $('<td colspan="20">Loading...</td>')
 			.appendTo(tr)
 			.load($(this).find('a.cashflows').attr('href'));
 		}

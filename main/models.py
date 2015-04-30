@@ -8,6 +8,7 @@ from calendar import monthrange
 from collections import namedtuple, deque
 import itertools
 from operator import attrgetter
+from django.forms import Textarea
 
 
 class Building(models.Model):
@@ -135,6 +136,19 @@ class Tenant(models.Model):
 # Translators: This is the balance of the tenant's payments
     balance.short_description = _("balance")
 
+    def expired_reminders_count(self):
+        return (
+            self.reminder_set
+            .filter(read=False)
+            .filter(date__lte=date.today())
+            .count())
+
+    def pending_reminders_count(self):
+        return (
+            self.reminder_set
+            .filter(read=False)
+            .count())
+
     class Meta:
         verbose_name = _("tenant")
 
@@ -152,6 +166,20 @@ class TenantFile(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class Reminder(models.Model):
+    tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
+    date = models.DateField(_("date"))
+    text = models.TextField(_("description"))
+    text.widget = Textarea(attrs={'rows': 2})
+    read = models.BooleanField(_("mark as read"), default=False)
+
+    class Meta:
+        verbose_name = _("reminder")
+
+    def __unicode__(self):
+        return u"{} : {}".format(self.tenant, self.text)
 
 
 class RentRevision(models.Model):

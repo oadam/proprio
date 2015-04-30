@@ -1,1 +1,1 @@
-web: ./manage.py migrate && gunicorn wsgi:application --log-file -
+web: ./manage.py migrate && ./compile-messages.sh && gunicorn wsgi:application --log-file -
