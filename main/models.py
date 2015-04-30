@@ -4,6 +4,7 @@ from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, ValidationError
 from datetime import date
+from calendar import monthrange
 from collections import namedtuple, deque
 import itertools
 from operator import attrgetter
@@ -258,11 +259,14 @@ def next_month(date, increment=1):
     return add_month(date, increment)
 
 
-def add_month(date, increment=1):
-    month = date.month - 1 + increment
-    year = date.year + month / 12
+def add_month(d, increment=1):
+    month = d.month - 1 + increment
+    year = d.year + month / 12
     month = month % 12 + 1
-    return date.replace(month=month, year=year)
+    day = d.day
+    max_day = monthrange(year, month)[1]
+    day = min(day, max_day)
+    return date(month=month, year=year, day=day)
 
 
 def pop_cashflows_until(sorted_cashflows, until):

@@ -2,7 +2,7 @@
 from django.test import TestCase
 from models import fees_to_cashflows, payments_to_cashflows, revision_to_cashflows,\
     revisions_to_cashflows, RentRevision, Payment,\
-    Fee, Building, Property, Tenant, Cashflow, moving_average
+    Fee, Building, Property, Tenant, Cashflow, moving_average, add_month
 from django.contrib.auth.models import User
 from datetime import date
 from django.test import Client
@@ -161,3 +161,8 @@ class AnalyticsTest(TestCase):
             to_date=date(2011, 9, 1),
             sorted_cashflows=cashflows,
             size=2))
+
+
+class VariousTest(TestCase):
+    def test_add_month(self):
+        self.assertEqual(date(2015, 2, 28), add_month(date(2015, 1, 31), 1))
