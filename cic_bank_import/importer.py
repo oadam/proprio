@@ -3,6 +3,8 @@ from bank_import.models import ImportLine
 import datetime
 from decimal import Decimal
 from openpyxl import load_workbook
+from django.utils.translation import ugettext_lazy as _
+import os
 
 # number of rows after which we give up searching for the header
 GIVE_UP_AFTER = 30
@@ -31,6 +33,13 @@ class _Importer:
             amount = Decimal(credit)
         amount = amount.quantize(Decimal('.01'))
         return ImportLine(date=date.date(), caption=caption, amount=amount)
+
+    def validate(self, file):
+        filename, file_extension = os.path.splitext(file.name)
+        if file_extension != 'xlsx':
+            return _(u'only xlsx files are accepted for importer "{}"').format(self.get_id())
+        else:
+            return None
 
     def parse(self, file):
         wb = load_workbook(filename=file)
