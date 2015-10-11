@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.utils.module_loading import import_by_path
+from django.utils.module_loading import import_string
 
 # This utility get elements from the django config file
 # The objective is to have extension points at runtime
@@ -12,7 +12,7 @@ def get_elements(property_name):
         raise ValueError("{} django setting is required".format(property_name))
     result = []
     for path in paths:
-        result.append(import_by_path(path))
+        result.append(import_string(path))
     return result
 
 

@@ -1,4 +1,4 @@
-Django==1.8
+Django==1.8.4
 Whoosh==2.7
 dj-static==0.0.6
 django-bootstrap-form==3.2

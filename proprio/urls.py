@@ -9,7 +9,7 @@ admin.autodiscover()
 
 media_regex = r'^%s(?P<path>.*)$' % re.escape(settings.MEDIA_URL.lstrip('/'))
 urlpatterns = patterns('',
-    url(r'^$', RedirectView.as_view(url='main/')),
+    url(r'^$', RedirectView.as_view(url='main/', permanent=True)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^main/', include('main.urls')),
     url(r'^import/', include('bank_import.urls')),
