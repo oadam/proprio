@@ -4,4 +4,3 @@ dj-static==0.0.6
 django-bootstrap-form==3.1
 django-lineage==0.2.0
 gunicorn==19.2.1
-openpyxl==2.1.4

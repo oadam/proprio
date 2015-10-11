@@ -107,7 +107,7 @@ STATIC_ROOT = 'static'
 STATIC_URL = '/static/'
 
 PROPRIO_IMPORT_PARSERS = (
-    "cic_bank_import.importer.importer",
+    "credit_agricole_bank_import.importer.importer",
 )
 
 # give the opportunity for the deployment script

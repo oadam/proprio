@@ -123,9 +123,9 @@ class BankImporter(TestCase):
     def test_submit(self):
         c = Client()
         c.login(username='toto', password='toto_pass')
-        with open('bank_import/import_test.xlsx') as fp:
+        with open('bank_import/import_test.csv') as fp:
             response = c.post(
                 '/import',
-                {type: 'CIC-XLSX', file: fp},
+                {type: 'CA-CSV', file: fp},
                 follow=True)
         self.assertEqual(response.status_code, 200)

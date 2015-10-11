@@ -9,7 +9,7 @@ from decimal import Decimal
 
 class ParseTest(TestCase):
     def test_parse(self):
-        f = open('cic_bank_import/test-file.xlsm', 'rb')
+        f = open('credit_agricole_bank_import/test-file.csv', 'rb')
         result = importer.parse(f)
         expected = [
             ImportLine(
@@ -18,11 +18,11 @@ class ParseTest(TestCase):
                     caption="Libele 1"),
             ImportLine(
                     date=date(day=1, month=12, year=2014),
-                    amount=Decimal('-1250'),
+                    amount=Decimal('-1250.00'),
                     caption="Libele 2"),
             ImportLine(
                     date=date(day=2, month=12, year=2014),
-                    amount=Decimal('550'),
+                    amount=Decimal('550.00'),
                     caption=u"Libelé 3"),
             ]
         self.assertEquals(result, expected)
