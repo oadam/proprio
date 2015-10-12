@@ -1,9 +1,10 @@
 # vim: ai ts=4 sts=4 et sw=4
 from django.test import TestCase
-from views import create_formset, submit_form, remove_saved_lines
+from views import (
+    guess, submit_lines, remove_saved_lines, get_mappers_and_guessers,)
 from main.models import Property, Tenant, Building, Payment
 from datetime import date
-from models import ImportLine
+from models import ImportLine, ImportedLine
 from django.contrib.auth.models import User
 from django.test import Client
 from decimal import Decimal
@@ -40,73 +41,56 @@ class BankImporter(TestCase):
             'toto', 'toto@gmail.com', 'toto_pass')
 
     def test_guesses(self):
-        lines = [
-            ImportLine(
-                date=date(day=1, month=1, year=2011),
-                amount=Decimal('100'),
-                caption="Vir Olivier Adam rent january"),
-            ImportLine(
-                date=date(day=3, month=1, year=2011),
-                amount=Decimal('600'),
-                caption="Doe rent"),
-            ImportLine(
-                date=date(day=3, month=1, year=2011),
-                amount=Decimal('12.98'),
-                caption="unrelated utility bill"),
-            ImportLine(
-                date=date(day=1, month=2, year=2011),
-                amount=Decimal('100'),
-                caption="Vir Olivier Adam rent february"),
-            ]
-        current_mapping = [{'mapping': ''} for x in lines]
-        formset = create_formset(lines, current_mapping)
-        choices = [form['mapping'].field.choices for form in formset]
-        self.assertEquals(len(choices), 4)
-        self.assertEquals([c[0][0] for c in choices], [''] * 4)
-        self.assertEquals([c[1][0] for c in choices], ['HIDE'] * 4)
-        # automatic guesses
-        self.assertEquals([len(c[2][1]) for c in choices], [1, 1, 0, 1])
-        a_choice = '["tenant_payment", {}]'.format(self.tenant_a.id)
-        self.assertEquals(choices[0][2][1][0][0], a_choice)
-        self.assertEquals(choices[3][2][1][0][0], a_choice)
-        # exhaustive tenant choices
-        self.assertEquals([len(c[3][1]) for c in choices], [2] * 4)
+        mappers, guessers = get_mappers_and_guessers()
+        line1 = ImportLine(
+            date=date(day=1, month=1, year=2011),
+            amount=Decimal('100'),
+            caption="Vir Olivier Adam rent january")
+        expected1 = '["tenant_payment", {}]'.format(self.tenant_a.id)
+        guess1, _ = guess(guessers, mappers, line1)
+        self.assertEquals(guess1, expected1)
+        line2 = ImportLine(
+            date=date(day=3, month=1, year=2011),
+            amount=Decimal('600'),
+            caption="Doe rent")
+        expected2 = '["tenant_payment", {}]'.format(self.tenant_b.id)
+        guess2, _ = guess(guessers, mappers, line2)
+        self.assertEquals(guess2, expected2)
+        line3 = ImportLine(
+            date=date(day=3, month=1, year=2011),
+            amount=Decimal('12.98'),
+            caption="unrelated utility bill")
+        guess3 = guess(guessers, mappers, line3)
+        self.assertEquals(guess3, None)
 
     def test_save(self):
         lines = [
-            ImportLine(
+            ImportedLine(
                 date=date(day=1, month=1, year=2011),
                 amount=Decimal('100'),
-                caption="Vir Olivier Adam rent january"),
-            ImportLine(
+                caption="Vir Olivier Adam rent january",
+                mapping='["tenant_payment", {}]'
+                .format(self.tenant_a.id),),
+            ImportedLine(
                 date=date(day=3, month=1, year=2011),
                 amount=Decimal('600'),
-                caption="Doe rent"),
-            ImportLine(
+                caption="Doe rent",
+                mapping='["tenant_payment", {}]'
+                .format(self.tenant_a.id),),
+            ImportedLine(
                 date=date(day=3, month=1, year=2011),
                 amount=Decimal('12.98'),
-                caption="unrelated utility bill"),
+                caption="unrelated utility bill",
+                mapping='HIDE',)
             ]
-        data = {
-            'form-INITIAL_FORMS': '3',
-            'form-TOTAL_FORMS': '3',
-            'form-MAX_NUM_FORMS': '1000',
-            'form-0-mapping':
-                '["tenant_payment", {}]'
-                .format(self.tenant_a.id),
-            'form-1-mapping':
-                '["tenant_payment", {}]'
-                .format(self.tenant_b.id),
-            'form-2-mapping': 'HIDE'
-        }
-        current_mapping = [{'mapping': ''} for x in lines]
-        formset = create_formset(lines, current_mapping, post=data)
-        is_valid = formset.is_valid()
-        self.assertTrue(is_valid)
-        cleaned = [f.cleaned_data.get('mapping') for f in formset]
-        submit_form(lines, cleaned)
+        submit_lines(lines)
         # we've mapped all lines so they should not reappear
-        saved_removed = remove_saved_lines(lines)
+        import_lines = [ImportLine(
+            date=l.date,
+            amount=l.amount,
+            caption=l.caption)
+            for l in lines]
+        saved_removed = remove_saved_lines(import_lines)
         self.assertEqual(
             saved_removed, [],
             msg='imported lines stop showing up')
@@ -120,12 +104,22 @@ class BankImporter(TestCase):
         response = c.get('/import', follow=True)
         self.assertEqual(response.status_code, 200)
 
+    def test_generate(self):
+        c = Client()
+        c.login(username='toto', password='toto_pass')
+        with open('bank_import/import_test.CSV') as fp:
+            response = c.post(
+                '/import/generate-mapping',
+                {'type': 'CA-CSV', 'file': fp},
+                follow=True)
+        self.assertEqual(response.status_code, 200)
+
     def test_submit(self):
         c = Client()
         c.login(username='toto', password='toto_pass')
-        with open('bank_import/import_test.csv') as fp:
+        with open('bank_import/submit_test.xlsx') as fp:
             response = c.post(
-                '/import',
-                {type: 'CA-CSV', file: fp},
+                '/import/submit-mapping',
+                {'file': fp},
                 follow=True)
         self.assertEqual(response.status_code, 200)

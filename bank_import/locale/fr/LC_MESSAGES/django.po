@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-12 23:17+0100\n"
-"PO-Revision-Date: 2014-11-12 23:21+0100\n"
+"POT-Creation-Date: 2015-10-14 00:18+0200\n"
+"PO-Revision-Date: 2015-10-14 00:20+0100\n"
 "Last-Translator: Olivier Adam <olivieradam666+spam@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -17,21 +17,22 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: views.py:61
-msgid "Tenant payment"
-msgstr "Paiement d'un locataire"
+#: models.py:10 templates/bank_import/mapping.html:20 views.py:220
+msgid "date"
+msgstr "date"
 
-#: views.py:139
-msgid "Decide later"
-msgstr "Décider plus tard"
+#: models.py:12 templates/bank_import/mapping.html:21 views.py:221
+msgid "amount"
+msgstr "montant"
 
-#: views.py:140
-msgid "Hide line definitively"
-msgstr "Cacher la ligne définitivement"
+#: models.py:13 templates/bank_import/mapping.html:22 views.py:222
+msgid "caption"
+msgstr "libellé"
 
-#: views.py:145
-msgid "Automatic mapping"
-msgstr "Assignation automatique"
+#: models.py:14 templates/bank_import/mapping.html:23 views.py:201
+#: views.py:223 views.py:260
+msgid "mapping"
+msgstr "mapping"
 
 #: templates/bank_import/mapping.html:8
 msgid "Once import is confirmed you cannot cancel it."
@@ -51,22 +52,47 @@ msgstr ""
 "Si vous n'êtes pas sûrs, choisissez l'option 'Décider plus tard' afin que la "
 "ligne apparaisse la prochaîne fois."
 
-#: templates/bank_import/mapping.html:20
-msgid "date"
-msgstr "date"
-
-#: templates/bank_import/mapping.html:21
-msgid "amount"
-msgstr "montant"
-
-#: templates/bank_import/mapping.html:22
-msgid "caption"
-msgstr "libellé"
-
-#: templates/bank_import/mapping.html:23
-msgid "mapping"
-msgstr "assignation"
-
-#: templates/bank_import/mapping.html:40 templates/bank_import/upload.html:9
+#: templates/bank_import/mapping.html:40 templates/bank_import/upload.html:10
+#: templates/bank_import/upload.html:16
 msgid "Submit"
 msgstr "Soumettre"
+
+#: templates/bank_import/upload.html:6
+msgid "generate mapping using bank file"
+msgstr "générer le mapping à partir du fichier bancaire"
+
+#: templates/bank_import/upload.html:12
+msgid "submit filled mapping file"
+msgstr "soumettre le fichier de mapping complété"
+
+#: views.py:68
+msgid "import is successful"
+msgstr "l'import a réussi !"
+
+#: views.py:73
+msgid "Tenant payment"
+msgstr "Paiement d'un locataire"
+
+#: views.py:160
+msgid "Decide later"
+msgstr "Décider plus tard"
+
+#: views.py:161
+msgid "Hide line definitively"
+msgstr "Cacher la ligne définitivement"
+
+#: views.py:203 views.py:261
+msgid "possible_mappings"
+msgstr "mapping possibles"
+
+#: views.py:267
+msgid "date is missing on line {}"
+msgstr "Il manque des données sur la ligne {}"
+
+#: views.py:272
+#| msgid "mapping"
+msgid "unknow mapping"
+msgstr "mapping inconnu"
+
+#~ msgid "Automatic mapping"
+#~ msgstr "Assignation automatique"

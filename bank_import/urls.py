@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = patterns(
     '',
-    url(r'^$', views.upload),
-    url(r'^mapping/$', views.mapping),
+    url(r'^$', views.forms),
+    url(r'^generate-mapping$', views.generate),
+    url(r'^submit-mapping$', views.submit),
 )

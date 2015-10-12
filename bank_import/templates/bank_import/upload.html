@@ -3,9 +3,16 @@
 {% load bootstrap %}
 {% load i18n %}
 {% block content %}
-<form enctype="multipart/form-data" role="form" method="post" action=".">
+<h2>{% trans "generate mapping using bank file"|title %}</h2>
+<form enctype="multipart/form-data" role="form" method="post" action="generate-mapping">
         {% csrf_token %}
-        {{ form|bootstrap }}
+        {{ generate_form|bootstrap }}
+        <button type="submit" class="btn btn-default">{% trans "Submit"%}</button>
+</form>
+<h2>{% trans "submit filled mapping file"|title %}</h2>
+<form enctype="multipart/form-data" role="form" method="post" action="submit-mapping">
+        {% csrf_token %}
+        {{ submit_form|bootstrap }}
         <button type="submit" class="btn btn-default">{% trans "Submit"%}</button>
 </form>
 {% endblock %}

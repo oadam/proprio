@@ -56,3 +56,5 @@ venv
 .vagrant
 data/*
 !data/README
+
+*~
