@@ -17,6 +17,7 @@ class Building(models.Model):
 
     class Meta:
         verbose_name = _("building")
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name
@@ -58,6 +59,7 @@ class Property(models.Model):
     class Meta:
         verbose_name = _("property")
         verbose_name_plural = _("properties")
+        ordering = ['name']
 
     def __unicode__(self):
         return u'{}\n{}'.format(self.name, self.address)
@@ -151,6 +153,7 @@ class Tenant(models.Model):
 
     class Meta:
         verbose_name = _("tenant")
+        ordering = ['name']
 
     def __unicode__(self):
         return u"{} {}".format(self.name, self.property)
@@ -177,6 +180,7 @@ class Reminder(models.Model):
 
     class Meta:
         verbose_name = _("reminder")
+        ordering = ['-date']
 
     def __unicode__(self):
         return u"{} : {}".format(self.tenant, self.text)
@@ -198,6 +202,7 @@ class RentRevision(models.Model):
     class Meta:
         verbose_name = _("rent revision")
         verbose_name_plural = _("rent revisions")
+        ordering = ['-start_date']
 
     def __unicode__(self):
         return u"{} - {}".format(self.start_date, self.end_date or "")
@@ -216,6 +221,7 @@ class Payment(models.Model):
     class Meta:
         verbose_name = _("payment received from tenant")
         verbose_name_plural = _("payments received from tenant")
+        ordering = ['-date']
 
     def __unicode__(self):
         return u"{} - {}".format(self.date, self.amount)
@@ -230,6 +236,7 @@ class Fee(models.Model):
 
     class Meta:
         verbose_name = _("one-time fee")
+        ordering = ['-date']
 
     def __unicode__(self):
         return u"{} - {}".format(self.description, self.date)
