@@ -17,7 +17,7 @@ import re
 import datetime
 import itertools
 from collections import defaultdict
-from models import ImportLine, ImportedLine
+from models import ImportedLine
 
 
 IMPORTER_SETTINGS = 'PROPRIO_IMPORT_PARSERS'
@@ -178,7 +178,7 @@ def fill_all_mappings(worksheet, mappers):
 
 def parse_caption_to_id(all_mapping_worksheet):
     result = {}
-    for row in range(1, all_mapping_worksheet.max_row):
+    for row in range(1, all_mapping_worksheet.max_row + 1):
         caption = all_mapping_worksheet.cell(row=row, column=1).value
         id = all_mapping_worksheet.cell(row=row, column=2).value
         # for Decide later mapping
@@ -261,14 +261,14 @@ def submit_mapping(file):
     mapping_sheet = wb[_('possible_mappings')]
     caption_to_id = parse_caption_to_id(mapping_sheet)
     result = []
-    for row in range(2, main_sheet.max_row):
+    for row in range(2, main_sheet.max_row + 1):
         date = main_sheet.cell(column=1, row=row).value
         if date is None:
             raise ValueError(_('date is missing on line {}').format(row))
         amount = main_sheet.cell(column=2, row=row).value
         caption = main_sheet.cell(column=3, row=row).value
         mapping_caption = main_sheet.cell(column=4, row=row).value
-        if not mapping_caption in caption_to_id:
+        if mapping_caption not in caption_to_id:
             raise ValueError(_('unknow mapping').format(mapping_caption))
         mapping = caption_to_id[mapping_caption]
         result.append(ImportedLine(
