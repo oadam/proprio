@@ -68,7 +68,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 ROOT_URLCONF = 'proprio.urls'
 
-WSGI_APPLICATION = 'proprio.wsgi.application'
+#WSGI_APPLICATION = 'proprio.wsgi.application'
 
 #for date support
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
