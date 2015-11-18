@@ -13,9 +13,10 @@ Please use login `demo/demo`.
 
 Installation
 ------------
-`pip install -r requirements.txt`
-`python manage.py syncdb`
-`python manage.py runserver`
+
+    pip install -r requirements.txt
+    python manage.py syncdb
+    python manage.py runserver
 
 Custom bank file parser
 -----------------------
