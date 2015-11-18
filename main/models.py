@@ -17,6 +17,7 @@ class Building(models.Model):
 
     class Meta:
         verbose_name = _("building")
+        verbose_name_plural = _("buildings")
         ordering = ['name']
 
     def __unicode__(self):
@@ -73,6 +74,7 @@ class PropertyFile(models.Model):
 
     class Meta:
         verbose_name = _("file")
+        verbose_name_plural = _("files")
 
     def __unicode__(self):
         return self.name
@@ -153,6 +155,7 @@ class Tenant(models.Model):
 
     class Meta:
         verbose_name = _("tenant")
+        verbose_name_plural = _("tenants")
         ordering = ['name']
 
     def __unicode__(self):
@@ -166,6 +169,7 @@ class TenantFile(models.Model):
 
     class Meta:
         verbose_name = _("file")
+        verbose_name_plural = _("files")
 
     def __unicode__(self):
         return self.name
@@ -180,6 +184,7 @@ class Reminder(models.Model):
 
     class Meta:
         verbose_name = _("reminder")
+        verbose_name_plural = _("reminders")
         ordering = ['-date']
 
     def __unicode__(self):
@@ -236,6 +241,7 @@ class Fee(models.Model):
 
     class Meta:
         verbose_name = _("one-time fee")
+        verbose_name_plural = _("one-time fees")
         ordering = ['-date']
 
     def __unicode__(self):
