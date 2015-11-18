@@ -14,6 +14,7 @@
 		<thead>
 			<tr>
 				<th>{% trans "tenant"|title %}</th>
+				<th>{% trans "property"|title %}</th>
 				<th>{% trans "balance"|title %}</th>
 				<th>{% trans "trend"|title %}</th>
 				<th>{% trans "actions"|title %}</th>
@@ -27,12 +28,12 @@
 				<a href="{% url 'admin:main_tenant_change' t.tenant.id %}">{{ t.tenant.name }}</a>
 				<a class="cashflows" href="{% url 'tenant_cashflows' t.tenant.id %}">Cashflows</a>
 			</td>
-			<td>{{ t.tenant.balance }}€</td>
+			<td>{{ t.tenant.property }}</td>
+			<td>{{ t.tenant.balance }} €</td>
 			<td>
 				<span class="trend" normal-min="{{ t.normal_min }}"> {{ t.trend }}</span>
 			</td>
 			<td>
-				<button type="button" class="btn btn-default receipts"><span class="glyphicon glyphicon-envelope"></span> {% trans "write letter"|title %}</button>
 				<a href="{% url 'admin:main_tenantreminders_change' t.tenant.id %}" class="btn btn-default reminders {{t.reminder_css}}"><span class="glyphicon glyphicon-bullhorn"></span> {% trans "reminders"|title %} - {{t.reminders_count}}</a>
 		       	</td>
 		</tr>
