@@ -68,11 +68,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 ROOT_URLCONF = 'proprio.urls'
 
-#WSGI_APPLICATION = 'proprio.wsgi.application'
-
-#for date support
-SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
-
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
@@ -83,22 +78,20 @@ DATABASES = {
     }
 }
 
-#uploaded files
-MEDIA_ROOT = os.path.join(BASE_DIR, 'data' , 'uploaded_files')
+# uploaded files
+MEDIA_ROOT = os.path.join(BASE_DIR, 'data', 'uploaded_files')
 MEDIA_URL = '/files/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
 USE_L10N = True
 
 USE_TZ = True
+
+LANGUAGES = (('fr', 'Francais'), ('de', 'Deutsch'), ('en', 'English'))
 
 
 # Static files (CSS, JavaScript, Images)
