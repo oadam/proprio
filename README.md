@@ -1,11 +1,11 @@
 property-management
 ===================
 <span class="badges">
-[![Build Status](https://drone.io/github.com/oadam/proprio/status.png)][drone]
+[![Build Status](https://travis-ci.org/oadam/proprio.svg?branch=master)](https://travis-ci.org/oadam/proprio)
 [![Dependency Status](https://gemnasium.com/oadam/proprio.png)][gemnasium]
 </span>
 
-[drone]: https://drone.io/github.com/oadam/proprio/latest
+[![Build Status](https://travis-ci.org/oadam/proprio.svg?branch=master)](https://travis-ci.org/oadam/proprio)
 [gemnasium]: https://gemnasium.com/oadam/proprio
 
 A free as in a beer property management software to manage your tenants
