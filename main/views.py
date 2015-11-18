@@ -9,8 +9,7 @@ def tenants(request):
     result = []
     tenants = (
         Tenant.objects.all()
-        .prefetch_related('reminder_set')
-        .order_by('name'))
+        .prefetch_related('reminder_set'))
     for t in tenants:
         rounded_trend = [round(v, 2) for v in t.trend()]
         current_trend = rounded_trend[-1]

@@ -156,7 +156,7 @@ class Tenant(models.Model):
     class Meta:
         verbose_name = _("tenant")
         verbose_name_plural = _("tenants")
-        ordering = ['name']
+        ordering = ['tenancy_end_date', 'name']
 
     def __unicode__(self):
         return u"{} {}".format(self.name, self.property)
