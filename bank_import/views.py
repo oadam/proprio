@@ -180,6 +180,9 @@ def parse_caption_to_id(all_mapping_worksheet):
     result = {}
     for row in range(1, all_mapping_worksheet.max_row + 1):
         caption = all_mapping_worksheet.cell(row=row, column=1).value
+        if caption is None:
+            # skip empty rows (max_row is not very reliable)
+            continue
         id = all_mapping_worksheet.cell(row=row, column=2).value
         # for Decide later mapping
         if id is None:
@@ -264,7 +267,8 @@ def submit_mapping(file):
     for row in range(2, main_sheet.max_row + 1):
         date = main_sheet.cell(column=1, row=row).value
         if date is None:
-            raise ValueError(_('date is missing on line {}').format(row))
+            # skip empty rows (max_row is not very reliable)
+            continue
         amount = main_sheet.cell(column=2, row=row).value
         caption = main_sheet.cell(column=3, row=row).value
         mapping_caption = main_sheet.cell(column=4, row=row).value
