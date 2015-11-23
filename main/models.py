@@ -9,6 +9,7 @@ from collections import namedtuple, deque
 import itertools
 from operator import attrgetter
 from django.forms import Textarea
+from decimal import Decimal
 
 
 class Building(models.Model):
@@ -193,10 +194,10 @@ class Reminder(models.Model):
 
 class RentRevision(models.Model):
     tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
-    start_date = models.DateField(_("start date"), validators=[validate_month])
+    start_date = models.DateField(_("start date"))
     end_date = models.DateField(
-        _("end date"), validators=[validate_month],
-        blank=True, null=True)
+        _("end date"), blank=True, null=True, help_text=_(
+            "date at which the rent generation should stop (non-inclusive)"))
     rent = models.DecimalField(
         _("monthly rent"), max_digits=7, decimal_places=2,
         validators=[MinValueValidator(0)])
@@ -269,22 +270,44 @@ def fees_to_cashflows(date, fees):
             for x in fees if x.date <= date]
 
 
+def first_of_month_range(start_date, end_date):
+    start_index = 12*start_date.year + start_date.month
+    end_index = 12*end_date.year + end_date.month
+    for index in range(start_index, end_index):
+        month = (index - 1) % 12 + 1
+        year = (index - 1) / 12
+        yield date(year, month, 1)
+
+
+TWOPLACES = Decimal('0.00')
+
+
+def fractional_amount(amount, days, month_days):
+    """Computes the amount for monthes that are not paid in full
+    """
+    return Decimal(amount * days / month_days).quantize(TWOPLACES)
+
+
 def revision_to_cashflows(rev, end_date):
     """Converts a revision to a list of cashflows
-    end_date -- the first month we do not want to take into account
+    end_date -- the date from which we want to stop computing
     """
-    end_date = rev.end_date or end_date
+    if rev.end_date is not None:
+        end_date = next_month(rev.end_date)
     result = []
-    month_range = xrange(
-        12*rev.start_date.year + rev.start_date.month,
-        12*end_date.year + end_date.month)
-    for m in month_range:
-        # because january is 1
-        mm = m - 1
-        d = date(mm / 12, mm % 12 + 1, 1)
-        result.append(Cashflow(d, -rev.rent, _("rent")))
+    for first_of_month in first_of_month_range(rev.start_date, end_date):
+        start = max(first_of_month, rev.start_date)
+        end = next_month(first_of_month)
+        if rev.end_date is not None:
+            end = min(end, rev.end_date)
+        delta = end - start
+        total_days = monthrange(first_of_month.year, first_of_month.month)[1]
+        rent = fractional_amount(-rev.rent, delta.days, total_days)
+        result.append(Cashflow(first_of_month, rent, _("rent")))
         if rev.provision != 0:
-            result.append(Cashflow(d, -rev.provision, _("provision")))
+            p = fractional_amount(-rev.provision, delta.days, total_days)
+            result.append(Cashflow(
+                first_of_month, p, _("provision")))
     return result
 
 

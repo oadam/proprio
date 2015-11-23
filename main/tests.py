@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from datetime import date
 from django.test import Client
 from django.core import urlresolvers
+from decimal import Decimal as D
 
 
 class BasicIntegrationTest(TestCase):
@@ -106,6 +107,25 @@ class TenantBalanceTests(TestCase):
             6,
             len(revision_to_cashflows(revision, date(2011, 7, 1))),
             "following fees")
+
+    def test_partial_revision_to_fees(self):
+        revision = RentRevision(
+            start_date=date(2010, 10, 1),
+            end_date=date(2010, 11, 16),
+            rent=200,
+            provision=100)
+        #import pdb;pdb.set_trace()
+        result = revision_to_cashflows(
+            revision,
+            # far in future date so that we get all rents
+            date(2015, 4, 1))
+        self.assertEqual([
+            (date(2010, 10, 1), -200),
+            (date(2010, 10, 1), -100),
+            (date(2010, 11, 1), -100),
+            (date(2010, 11, 1), -50),
+            ],
+            map(cashflow_to_tuple, result))
 
     def test_revisions_to_fees(self):
         rentRevision1 = RentRevision(
