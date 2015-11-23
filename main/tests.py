@@ -7,7 +7,6 @@ from django.contrib.auth.models import User
 from datetime import date
 from django.test import Client
 from django.core import urlresolvers
-from decimal import Decimal as D
 
 
 class BasicIntegrationTest(TestCase):
@@ -114,7 +113,6 @@ class TenantBalanceTests(TestCase):
             end_date=date(2010, 11, 16),
             rent=200,
             provision=100)
-        #import pdb;pdb.set_trace()
         result = revision_to_cashflows(
             revision,
             # far in future date so that we get all rents
