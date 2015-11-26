@@ -3,5 +3,5 @@ Whoosh==2.7
 dj-static==0.0.6
 django-bootstrap-form==3.2
 django-lineage==0.2.0
-gunicorn==19.3.0
+gunicorn==19.4.1
 openpyxl==2.3.1
