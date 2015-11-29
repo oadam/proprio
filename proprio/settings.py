@@ -92,7 +92,7 @@ USE_L10N = True
 USE_TZ = True
 
 LANGUAGES = (('fr', 'Francais'), ('de', 'Deutsch'), ('en', 'English'))
-
+LANGUAGE_CODE = 'en_us'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
