@@ -99,23 +99,22 @@ class Tenant(models.Model):
         _("tenancy end date"), blank=True, null=True)
     deposit = models.DecimalField(
         _("deposit"), max_digits=7, decimal_places=2,
+        help_text=_(
+            'A sum of money asked to tenant on day 1. '
+            'It is payed back in full on the final day of the tenancy'),
         validators=[MinValueValidator(0)], default=0)
     contact_info = models.TextField(_("contact info"), blank=True)
     notes = models.TextField(_("notes"), blank=True)
 
-    def cashflows(self):
-        if self.tenancy_end_date:
-            last_revision_end_date = next_month(self.tenancy_end_date, -1)
-            generate_rent_until = max(date.today(), last_revision_end_date)
-        else:
-            generate_rent_until = date.today()
+    def cashflows(self, date_until=date.today()):
         rents = revisions_to_cashflows(
-            generate_rent_until, self.rentrevision_set.all())
+            date_until, self.rentrevision_set.all())
         payments = payments_to_cashflows(
-            date.today(), self.payment_set.all())
-        fees = fees_to_cashflows(date.today(), self.fee_set.all())
+            date_until, self.payment_set.all())
+        fees = fees_to_cashflows(date_until, self.fee_set.all())
+        deposit_cashflows = self.deposit_cashflows(date_until)
         non_sorted = itertools.chain.from_iterable([
-            payments, rents, fees])
+            payments, rents, fees, deposit_cashflows])
         date_sorted = sorted(non_sorted, key=attrgetter('date', 'amount'))
         result = []
         balance = 0
@@ -124,6 +123,15 @@ class Tenant(models.Model):
             result.append(
                 CashflowAndBalance(c.date, c.amount, c.description, balance))
         return reversed(result)
+
+    def deposit_cashflows(self, date_until):
+        result = [Cashflow(
+            self.tenancy_begin_date, -self.deposit, _('deposit'))]
+        if (self.tenancy_end_date is not None and
+                date_until > self.tenancy_end_date):
+            result.append(Cashflow(
+                self.tenancy_end_date, self.deposit, _('deposit refund')))
+        return result
 
     def trend(self):
         return moving_average(date.today(), list(self.cashflows()), 3)

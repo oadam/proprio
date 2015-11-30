@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: proprio\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-23 23:04+0100\n"
-"PO-Revision-Date: 2015-11-23 23:04+0100\n"
+"POT-Creation-Date: 2015-11-30 23:15+0100\n"
+"PO-Revision-Date: 2015-11-30 23:16+0100\n"
 "Last-Translator: Olivier Adam <olivieradam666+spam@gmail.com>\n"
 "Language-Team: French <olivieradam666+spam@gmail.com>\n"
 "Language: fr\n"
@@ -39,11 +39,11 @@ msgid "tenants reminder lists"
 msgstr "rappels des locataires"
 
 #: models.py:16 models.py:36 models.py:47 models.py:73 models.py:95
-#: models.py:168
+#: models.py:176
 msgid "name"
 msgstr "nom"
 
-#: models.py:17 models.py:53 models.py:104
+#: models.py:17 models.py:53 models.py:107
 msgid "notes"
 msgstr "notes"
 
@@ -59,8 +59,8 @@ msgstr "immeubles"
 msgid "number of properties"
 msgstr "nombre d'appartements"
 
-#: models.py:37 models.py:40 models.py:74 models.py:77 models.py:169
-#: models.py:172
+#: models.py:37 models.py:40 models.py:74 models.py:77 models.py:177
+#: models.py:180
 msgid "file"
 msgstr "fichier"
 
@@ -84,7 +84,7 @@ msgstr "appartement"
 msgid "properties"
 msgstr "appartements"
 
-#: models.py:78 models.py:173
+#: models.py:78 models.py:181
 msgid "files"
 msgstr "fichiers"
 
@@ -100,110 +100,123 @@ msgstr "début de la location"
 msgid "tenancy end date"
 msgstr "fin de la location"
 
-#: models.py:101
+#: models.py:101 models.py:129
 msgid "deposit"
 msgstr "caution"
 
 #: models.py:103
+msgid ""
+"A sum of money asked to tenant on day 1. It is payed back in full on the "
+"final day of the tenancy"
+msgstr ""
+"Une somme qui est exigée du locataire au jour 1 de la location. Elle est "
+"intégralement restituée au dernier jour de la location"
+
+#: models.py:106
 msgid "contact info"
 msgstr "coordonnées"
 
+#: models.py:133
+#| msgid "deposit"
+msgid "deposit refund"
+msgstr "restitution de la caution"
+
 #. Translators: This is the balance of the tenant's payments
-#: models.py:142 templates/main/cashflows.html:10
+#: models.py:150 templates/main/cashflows.html:10
 #: templates/main/tenants.html:18
 msgid "balance"
 msgstr "balance"
 
-#: models.py:158 templates/main/tenants.html:16
+#: models.py:166 templates/main/tenants.html:16
 msgid "tenant"
 msgstr "locataire"
 
-#: models.py:159 templates/base.html:29
+#: models.py:167 templates/base.html:29
 msgid "tenants"
 msgstr "locataires"
 
-#: models.py:181 models.py:222 models.py:240 templates/main/cashflows.html:8
+#: models.py:189 models.py:230 models.py:248 templates/main/cashflows.html:8
 msgid "date"
 msgstr "date"
 
-#: models.py:182 models.py:220 models.py:238
+#: models.py:190 models.py:228 models.py:246
 msgid "description"
 msgstr "description"
 
-#: models.py:184
+#: models.py:192
 msgid "mark as read"
 msgstr "marqué comme lu"
 
-#: models.py:187
+#: models.py:195
 msgid "reminder"
 msgstr "rappel"
 
-#: models.py:188 templates/main/tenants.html:37
+#: models.py:196 templates/main/tenants.html:37
 msgid "reminders"
 msgstr "rappels"
 
-#: models.py:197
+#: models.py:205
 msgid "start date"
 msgstr "date de début"
 
-#: models.py:199
+#: models.py:207
 msgid "end date"
 msgstr "date de fin"
 
-#: models.py:200
+#: models.py:208
 msgid "date at which the rent generation should stop (non-inclusive)"
 msgstr "date (non-incluse) à laquelle la génération de loyer doit cesser"
 
-#: models.py:202
+#: models.py:210
 msgid "monthly rent"
 msgstr "loyer mensuel"
 
-#: models.py:205
+#: models.py:213
 msgid "monthly provision"
 msgstr "provision pour charges mensuelle"
 
-#: models.py:209
+#: models.py:217
 msgid "rent revision"
 msgstr "révision du loyer"
 
-#: models.py:210
+#: models.py:218
 msgid "rent revisions"
 msgstr "révisions du loyer"
 
-#: models.py:224 models.py:241 templates/main/cashflows.html:9
+#: models.py:232 models.py:249 templates/main/cashflows.html:9
 msgid "amount"
 msgstr "montant"
 
-#: models.py:228
+#: models.py:236
 msgid "payment received from tenant"
 msgstr "paiement reçu du locataire"
 
-#: models.py:229
+#: models.py:237
 msgid "payments received from tenant"
 msgstr "paiements reçus du locataire"
 
-#: models.py:244
+#: models.py:252
 msgid "one-time fee"
 msgstr "frais ponctuel"
 
-#: models.py:245
+#: models.py:253
 msgid "one-time fees"
 msgstr "frais ponctuels"
 
-#: models.py:262
+#: models.py:270
 #, python-format
 msgid "payment \"%(description)s\""
 msgstr "paiement \"%(description)s\""
 
-#: models.py:264
+#: models.py:272
 msgid "payment"
 msgstr "paiement"
 
-#: models.py:306
+#: models.py:314
 msgid "rent"
 msgstr "loyer"
 
-#: models.py:310
+#: models.py:318
 msgid "provision"
 msgstr "provision pour charges"
 

@@ -149,6 +149,20 @@ class TenantBalanceTests(TestCase):
             date(2011, 8, 15),
             [rentRevision1, rentRevision2])]))
 
+    def test_deposit_fees(self):
+        property = Property.objects.create(
+            name="test property",
+            address="test address", area=53, rooms=2)
+        tenant = Tenant.objects.create(
+            property=property, name="test tenant",
+            tenancy_begin_date=date(2011, 1, 1),
+            tenancy_end_date=date(2013, 9, 1),
+            deposit=100)
+        self.assertEqual(-100, sum([
+            f.amount for f in tenant.cashflows(date(2011, 2, 1))]))
+        self.assertEqual(0, sum([
+            f.amount for f in tenant.cashflows(date(2014, 2, 1))]))
+
 
 class AnalyticsTest(TestCase):
     def test_moving_average_empty(self):
