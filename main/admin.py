@@ -66,7 +66,7 @@ class TenantAdmin(admin.ModelAdmin):
         TenantFileInline,
         PaymentInline,
     ]
-    readonly_fields = ('property_link',)
+    readonly_fields = ('property_link', 'balance',)
 
     def property_link(self, obj):
         url = urlresolvers.reverse(
