@@ -8,9 +8,10 @@
 		box-sizing: content-box;
 	}
 </style>
+<script src="{% static "main/sorttable.js" %}"></script>
 {% endblock %}
 {% block content %}
-	<table class="table table-condensed table-hover">
+	<table class="table table-condensed table-hover sortable">
 		<thead>
 			<tr>
 				<th>{% trans "tenant"|title %}</th>
