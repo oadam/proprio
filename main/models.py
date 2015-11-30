@@ -111,10 +111,11 @@ class Tenant(models.Model):
             date_until, self.rentrevision_set.all())
         payments = payments_to_cashflows(
             date_until, self.payment_set.all())
-        fees = fees_to_cashflows(date_until, self.fee_set.all())
+        fees = fees_to_cashflows(date_until, self.fee_set.all(), negate=True)
+        discounts = fees_to_cashflows(date_until, self.discount_set.all())
         deposit_cashflows = self.deposit_cashflows(date_until)
         non_sorted = itertools.chain.from_iterable([
-            payments, rents, fees, deposit_cashflows])
+            payments, rents, fees, discounts, deposit_cashflows])
         date_sorted = sorted(non_sorted, key=attrgetter('date', 'amount'))
         result = []
         balance = 0
@@ -246,11 +247,34 @@ class Fee(models.Model):
     description = models.CharField(_("description"), max_length=255)
     tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
     date = models.DateField(_("date"))
-    amount = models.DecimalField(_("amount"), max_digits=7, decimal_places=2)
+    amount = models.DecimalField(
+        _("amount"), max_digits=7, decimal_places=2,
+        validators=[MinValueValidator(0)], default=0)
 
     class Meta:
         verbose_name = _("one-time fee")
         verbose_name_plural = _("one-time fees")
+        ordering = ['-date']
+
+    def __unicode__(self):
+        return u"{} - {}".format(self.description, self.date)
+
+
+class Discount(models.Model):
+    """a one-time discount
+    example: the tenant repainted a room and the
+    landlord agrees to pay for it
+    """
+    description = models.CharField(_("description"), max_length=255)
+    tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
+    date = models.DateField(_("date"))
+    amount = models.DecimalField(
+        _("amount"), max_digits=7, decimal_places=2,
+        validators=[MinValueValidator(0)], default=0)
+
+    class Meta:
+        verbose_name = _("one-time discount")
+        verbose_name_plural = _("one-time discount")
         ordering = ['-date']
 
     def __unicode__(self):
@@ -273,8 +297,8 @@ def payments_to_cashflows(date, payments):
         yield Cashflow(p.date, p.amount, d)
 
 
-def fees_to_cashflows(date, fees):
-    return [Cashflow(x.date, -x.amount, x.description)
+def fees_to_cashflows(date, fees, negate=False):
+    return [Cashflow(x.date, -x.amount if negate else x.amount, x.description)
             for x in fees if x.date <= date]
 
 

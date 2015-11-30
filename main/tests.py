@@ -68,7 +68,7 @@ class TenantBalanceTests(TestCase):
         expected = (fee.date, -fee.amount)
         self.assertEqual([expected], map(
             cashflow_to_tuple,
-            fees_to_cashflows(date(2011, 3, 15), [fee])),
+            fees_to_cashflows(date(2011, 3, 15), [fee], negate=True)),
             "nominal")
 
         self.assertSequenceEqual(

@@ -52,11 +52,17 @@ class FeeInline(admin.TabularInline):
     extra = 1
 
 
+class DiscountInline(admin.TabularInline):
+    model = models.Discount
+    extra = 1
+
+
 class TenantAdmin(admin.ModelAdmin):
     list_display = ('name', 'balance')
     inlines = [
         RentRevisionInline,
         FeeInline,
+        DiscountInline,
         TenantFileInline,
         PaymentInline,
     ]
