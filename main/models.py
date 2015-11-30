@@ -128,8 +128,7 @@ class Tenant(models.Model):
     def deposit_cashflows(self, date_until):
         result = [Cashflow(
             self.tenancy_begin_date, -self.deposit, _('deposit'))]
-        if (self.tenancy_end_date is not None and
-                date_until > self.tenancy_end_date):
+        if self.has_left(date_until):
             result.append(Cashflow(
                 self.tenancy_end_date, self.deposit, _('deposit refund')))
         return result
@@ -139,6 +138,11 @@ class Tenant(models.Model):
 
     def balance(self):
         return sum([c.amount for c in self.cashflows()])
+
+    def has_left(self, date_until=date.today()):
+        return (
+            self.tenancy_end_date is not None
+            and date_until > self.tenancy_end_date)
 
     def rent(self):
         query_set = self.rentrevision_set.all()

@@ -20,6 +20,8 @@ def tenants(request):
             css = "warning"
         else:
             css = ""
+        if t.has_left():
+            css += " gone"
 
         expired = t.expired_reminders_count()
         if expired > 0:
