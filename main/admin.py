@@ -47,6 +47,9 @@ class PaymentInline(admin.TabularInline):
     model = models.Payment
 
 
+class RefundInline(admin.TabularInline):
+    model = models.Refund
+
 class FeeInline(admin.TabularInline):
     model = models.Fee
     extra = 1
@@ -65,6 +68,7 @@ class TenantAdmin(admin.ModelAdmin):
         DiscountInline,
         TenantFileInline,
         PaymentInline,
+        RefundInline,
     ]
     readonly_fields = ('property_link', 'balance',)
 

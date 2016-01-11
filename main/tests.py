@@ -2,7 +2,7 @@
 from django.test import TestCase
 from models import fees_to_cashflows, payments_to_cashflows, revision_to_cashflows,\
     revisions_to_cashflows, RentRevision, Payment,\
-    Fee, Building, Property, Tenant, Cashflow, moving_average, add_month
+    Fee, Discount, Building, Property, Tenant, Cashflow, moving_average, add_month
 from django.contrib.auth.models import User
 from datetime import date
 from django.test import Client

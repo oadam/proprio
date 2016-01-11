@@ -111,11 +111,13 @@ class Tenant(models.Model):
             date_until, self.rentrevision_set.all())
         payments = payments_to_cashflows(
             date_until, self.payment_set.all())
+        refunds = payments_to_cashflows(
+            date_until, self.refund_set.all(), negate=True)
         fees = fees_to_cashflows(date_until, self.fee_set.all(), negate=True)
         discounts = fees_to_cashflows(date_until, self.discount_set.all())
         deposit_cashflows = self.deposit_cashflows(date_until)
         non_sorted = itertools.chain.from_iterable([
-            payments, rents, fees, discounts, deposit_cashflows])
+            payments, refunds, rents, fees, discounts, deposit_cashflows])
         date_sorted = sorted(non_sorted, key=attrgetter('date', 'amount'))
         result = []
         balance = 0
@@ -246,6 +248,25 @@ class Payment(models.Model):
         return u"{} - {}".format(self.date, self.amount)
 
 
+class Refund(models.Model):
+    """money returned to the tenant"""
+    description = models.CharField(
+        _("description"), max_length=1024)
+    tenant = models.ForeignKey(Tenant, verbose_name=Tenant._meta.verbose_name)
+    date = models.DateField(_("date"))
+    amount = models.DecimalField(
+        _("amount"), max_digits=7, decimal_places=2,
+        validators=[MinValueValidator(0)])
+
+    class Meta:
+        verbose_name = _("money transfer to tenant")
+        verbose_name_plural = _("money transfers to tenant")
+        ordering = ['-date']
+
+    def __unicode__(self):
+        return u"{} - {}".format(self.date, self.amount)
+
+
 class Fee(models.Model):
     """a one-time fee (for example an end of year adjustment fee)"""
     description = models.CharField(_("description"), max_length=255)
@@ -290,7 +311,7 @@ CashflowAndBalance = namedtuple('Cashflow',
                                 ['date', 'amount', 'description', 'balance'])
 
 
-def payments_to_cashflows(date, payments):
+def payments_to_cashflows(date, payments, negate=False):
     for p in payments:
         if p.date > date:
             continue
@@ -298,7 +319,7 @@ def payments_to_cashflows(date, payments):
             d = _('payment "%(description)s"') % {'description': p.description}
         else:
             d = _('payment')
-        yield Cashflow(p.date, p.amount, d)
+        yield Cashflow(p.date, -p.amount if negate else p.amount, d)
 
 
 def fees_to_cashflows(date, fees, negate=False):
