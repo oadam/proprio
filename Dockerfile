@@ -23,4 +23,5 @@ RUN (cd /opt/apps/proprio && . /opt/ve/proprio/bin/activate && ./compile-message
 ADD docker/additional_settings.py /opt/apps/proprio/additional_settings.py
 RUN adduser --gecos 'user to run the app' --system proprio
 EXPOSE 8000
+VOLUME /data
 CMD ["/bin/sh", "-e", "/usr/local/bin/run"]
