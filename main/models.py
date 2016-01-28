@@ -106,7 +106,9 @@ class Tenant(models.Model):
     contact_info = models.TextField(_("contact info"), blank=True)
     notes = models.TextField(_("notes"), blank=True)
 
-    def cashflows(self, date_until=date.today()):
+    def cashflows(self, date_until=None):
+        if date_until is None:
+            date_until = date.today()
         rents = revisions_to_cashflows(
             date_until, self.rentrevision_set.all())
         payments = payments_to_cashflows(
@@ -141,7 +143,9 @@ class Tenant(models.Model):
     def balance(self):
         return sum([c.amount for c in self.cashflows()])
 
-    def has_left(self, date_until=date.today()):
+    def has_left(self, date_until=None):
+        if date_until is None:
+            date_until = date.today()
         return (
             self.tenancy_end_date is not None
             and date_until > self.tenancy_end_date)
