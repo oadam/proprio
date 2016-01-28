@@ -1,8 +1,8 @@
 # vim: ai ts=4 sts=4 et sw=4
 from django.test import TestCase
-from models import fees_to_cashflows, payments_to_cashflows, revision_to_cashflows,\
+from models import payments_to_cashflows, revision_to_cashflows,\
     revisions_to_cashflows, RentRevision, Payment,\
-    Fee, Discount, Building, Property, Tenant, Cashflow, moving_average, add_month
+    Fee, Building, Property, Tenant, Cashflow, moving_average, add_month
 from django.contrib.auth.models import User
 from datetime import date
 from django.test import Client
@@ -68,24 +68,25 @@ class TenantBalanceTests(TestCase):
         expected = (fee.date, -fee.amount)
         self.assertEqual([expected], map(
             cashflow_to_tuple,
-            fees_to_cashflows(date(2011, 3, 15), [fee], negate=True)),
+            payments_to_cashflows(
+                date(2011, 3, 15), [fee], Fee, negate=True)),
             "nominal")
 
         self.assertSequenceEqual(
             [],
-            fees_to_cashflows(date(2011, 3, 14), [fee]),
+            list(payments_to_cashflows(date(2011, 3, 14), [fee], Fee)),
             "fees are counted")
 
     def test_payments(self):
         payment = Payment(amount=100, date=date(2011, 6, 15))
         expected = [(payment.date, payment.amount)]
-        actual = payments_to_cashflows(date(2011, 6, 15), [payment])
+        actual = payments_to_cashflows(date(2011, 6, 15), [payment], Payment)
         actual2 = map(cashflow_to_tuple, list(actual))
         self.assertEqual(
             expected, actual2, "payments are counted as positive")
         self.assertEqual(
             [],
-            list(payments_to_cashflows(date(2011, 6, 14), [payment])),
+            list(payments_to_cashflows(date(2011, 6, 14), [payment], Payment)),
             "payments are counted only after current date")
 
     def test_revision_to_fees(self):

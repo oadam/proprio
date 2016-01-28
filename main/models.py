@@ -112,11 +112,13 @@ class Tenant(models.Model):
         rents = revisions_to_cashflows(
             date_until, self.rentrevision_set.all())
         payments = payments_to_cashflows(
-            date_until, self.payment_set.all())
+            date_until, self.payment_set.all(), Payment)
         refunds = payments_to_cashflows(
-            date_until, self.refund_set.all(), negate=True)
-        fees = fees_to_cashflows(date_until, self.fee_set.all(), negate=True)
-        discounts = fees_to_cashflows(date_until, self.discount_set.all())
+            date_until, self.refund_set.all(), Refund, negate=True)
+        discounts = payments_to_cashflows(
+            date_until, self.discount_set.all(), Discount)
+        fees = payments_to_cashflows(
+            date_until, self.fee_set.all(), Fee, negate=True)
         deposit_cashflows = self.deposit_cashflows(date_until)
         non_sorted = itertools.chain.from_iterable([
             payments, refunds, rents, fees, discounts, deposit_cashflows])
@@ -315,20 +317,21 @@ CashflowAndBalance = namedtuple('Cashflow',
                                 ['date', 'amount', 'description', 'balance'])
 
 
-def payments_to_cashflows(date, payments, negate=False):
+def payments_to_cashflows(
+        date, payments, model_class, negate=False):
     for p in payments:
         if p.date > date:
             continue
+        model_class_label = model_class._meta.verbose_name
         if p.description:
-            d = _('payment "%(description)s"') % {'description': p.description}
+            # Translators: this is used for the tenant cashflow summary,
+            # for example: 'one-time-fee "broken window fee"'
+            d = _('%(model_class)s "%(description)s"') % {
+                'model_class': model_class_label,
+                'description': p.description}
         else:
-            d = _('payment')
+            d = model_class_label
         yield Cashflow(p.date, -p.amount if negate else p.amount, d)
-
-
-def fees_to_cashflows(date, fees, negate=False):
-    return [Cashflow(x.date, -x.amount if negate else x.amount, x.description)
-            for x in fees if x.date <= date]
 
 
 def first_of_month_range(start_date, end_date):
